@@ -36,7 +36,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
     return !!localStorage.getItem("token");
   });
 
-  const getRole = (): string | null => {
+  const [role, setRole] = useState<string | null>(() => {
     const token = localStorage.getItem("token");
     if (token) {
       try {
@@ -47,13 +47,13 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
       }
     }
     return null;
-  };
+  });
 
-  const [role, setRole] = useState<string | null>(getRole);
   const [user, setUser] = useState<User | null>(() => {
     const token = localStorage.getItem("token");
     return token ? jwtDecode<User>(token) : null;
   });
+
   const [authError, setAuthError] = useState<string | null>(null);
 
   const { sendRequest, response, error } = useAxios<{
@@ -88,17 +88,20 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
       localStorage.setItem("token", response.token);
       setIsAuth(true);
       setUser(response.user);
-      if (user) {
-        localStorage.setItem("role", user.role ?? "");
+      const decoded: any = jwtDecode(response.token);
+      setRole(decoded.role);
+      if (role === "HR") {
+        navigate("/dashboard");
+      } else {
+        navigate("/employee");
       }
-      navigate("/dashboard");
     } else if (error) {
       const errorMessage =
         error.message ?? "An error occurred during authentication.";
       setAuthError(errorMessage);
       console.error("Authentication error:", error);
     }
-  }, [response, error, navigate, user]);
+  }, [response, error, navigate]);
 
   const value = useMemo(
     () => ({
