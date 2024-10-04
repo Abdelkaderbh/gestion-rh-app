@@ -75,17 +75,6 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
     [sendRequest]
   );
 
-  const register = useCallback(
-    async (name: string, email: string, password: string, role: string) => {
-      await sendRequest({
-        method: "POST",
-        url: "/api/auth/signup",
-        data: { email, password, name, role },
-      });
-    },
-    [sendRequest]
-  );
-
   const logout = useCallback(() => {
     localStorage.removeItem("token");
     setIsAuth(false);
@@ -116,7 +105,6 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
       isAuth,
       user,
       login,
-      register,
       logout,
       authError,
       role,
