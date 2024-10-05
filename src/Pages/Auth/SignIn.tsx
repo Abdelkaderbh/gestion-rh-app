@@ -2,7 +2,7 @@ import React, { useState, ChangeEvent } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
 import ImageLight from "../../assets/img/login-office.jpeg";
-import ImageDark from "../../assets/img/create-account-office-dark.jpeg";
+import ImageDark from "../../assets/img/login-office-dark.jpg";
 import { Button } from "@windmill/react-ui";
 import { Input } from "@/components/ui/input";
 
@@ -27,7 +27,7 @@ const SignIn: React.FC = () => {
     setPassword(e.target.value);
 
   return (
-    <div className="flex items-center min-h-screen p-6 bg-gray-50">
+    <div className="flex items-center min-h-screen p-6 bg-gray-50 dark:bg-gray-900">
       <div className="flex-1 h-full max-w-4xl mx-auto overflow-hidden bg-white rounded-lg shadow-xl dark:bg-gray-800">
         <div className="flex flex-col overflow-y-auto md:flex-row">
           <div className="h-32 md:h-auto md:w-1/2">
@@ -75,7 +75,7 @@ const SignIn: React.FC = () => {
                   />
                 </label>
                 <Button
-                  className="mt-4 p-3 bg-purple-600 text-white hover:bg-purple-700"
+                  className="mt-4 p-3 bg-purple-800 text-white hover:bg-purple-700"
                   block
                   type="submit"
                 >
@@ -83,11 +83,11 @@ const SignIn: React.FC = () => {
                 </Button>
               </form>
 
-              <hr className="my-8" />
+              <hr className="my-8 dark:border-gray-600" />
 
               <p className="mt-4">
                 <Link
-                  className="text-sm font-medium text-purple-600 dark:text-purple-400 hover:underline"
+                  className="text-sm font-medium text-purple-700 dark:text-purple-500 hover:underline"
                   to="/forgot-password"
                 >
                   Forgot your password?
@@ -95,7 +95,7 @@ const SignIn: React.FC = () => {
               </p>
               <p className="mt-1">
                 <Link
-                  className="text-sm font-medium text-purple-600 dark:text-purple-400 hover:underline"
+                  className="text-sm font-medium text-purple-700 dark:text-purple-500 hover:underline"
                   to="/register"
                 >
                   Create account
