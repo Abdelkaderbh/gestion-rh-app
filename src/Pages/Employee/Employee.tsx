@@ -1,6 +1,6 @@
 import { useAuth } from "../../hooks/useAuth";
 
-const Dashboard = () => {
+const Employee = () => {
     const { user } = useAuth();
 
     return (
@@ -17,4 +17,4 @@ const Dashboard = () => {
     );
 };
 
-export default Dashboard;
+export default Employee;
