@@ -15,7 +15,7 @@ interface User {
   email: string;
   role: string;
   name: string;
-  password: string;
+  password?: string;
 }
 
 interface AuthContextType {
@@ -32,35 +32,17 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
-  const [isAuth, setIsAuth] = useState<boolean>(() => {
-    return !!localStorage.getItem("token");
-  });
-
-  const [role, setRole] = useState<string | null>(() => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      try {
-        const decoded: any = jwtDecode(token);
-        return decoded.role;
-      } catch (error) {
-        console.error("Failed to decode token", error);
-      }
-    }
-    return null;
-  });
-
-  const [user, setUser] = useState<User | null>(() => {
-    const token = localStorage.getItem("token");
-    return token ? jwtDecode<User>(token) : null;
-  });
-
+  const [isAuth, setIsAuth] = useState<boolean>(
+    () => !!localStorage.getItem("token")
+  );
+  const [role, setRole] = useState<string | null>(null);
+  const [user, setUser] = useState<User | null>(null);
   const [authError, setAuthError] = useState<string | null>(null);
 
   const { sendRequest, response, error } = useAxios<{
     token: string;
     user: User;
   }>();
-
   const navigate = useNavigate();
 
   const login = useCallback(
@@ -86,11 +68,14 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
   useEffect(() => {
     if (response?.token) {
       localStorage.setItem("token", response.token);
-      setIsAuth(true);
-      setUser(response.user);
+
       const decoded: any = jwtDecode(response.token);
       setRole(decoded.role);
-      if (role === "HR") {
+      setUser(response.user);
+
+      setIsAuth(true);
+
+      if (decoded.role === "HR") {
         navigate("/dashboard");
       } else {
         navigate("/employee");
@@ -102,6 +87,21 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
       console.error("Authentication error:", error);
     }
   }, [response, error, navigate]);
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      try {
+        const decoded: any = jwtDecode(token);
+        setRole(decoded.role);
+        setUser(jwtDecode<User>(token));
+        setIsAuth(true);
+      } catch (error) {
+        console.error("Failed to decode token:", error);
+        logout();
+      }
+    }
+  }, [logout]);
 
   const value = useMemo(
     () => ({
