@@ -4,7 +4,6 @@ import SignIn from "./Pages/Auth/SignIn";
 import SignUp from "./Pages/Auth/SignUp";
 import NotAuth from "./Pages/NotFound/NotAuth";
 import Dashboard from "./Pages/Dashboard/Dashboard";
-import Employee from "./Pages/Employee/Employee";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
@@ -17,7 +16,7 @@ function App() {
         <Route path="/register" element={<SignUp />} />
         <Route element={<ProtectedRoute />}>
           <Route index path="/dashboard" element={<Dashboard />} />
-          <Route index path="/employee" element={<Employee />} />
+          <Route index path="/employee" element={<Dashboard />} />
         </Route>
       </Routes>
     </div>
