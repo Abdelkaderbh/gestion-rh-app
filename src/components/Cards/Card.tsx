@@ -10,7 +10,7 @@ interface CardProps {
 const Card: React.FC<CardProps> = ({ title, value, children: icon }) => {
   return (
     <WindmillCard>
-      <CardBody className="flex items-center">
+      <CardBody className="flex items-center p-6">
         {icon}
         <div>
           <p className="mb-2 text-sm font-medium text-gray-600 dark:text-gray-400">{title}</p>
