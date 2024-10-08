@@ -1,3 +1,4 @@
+
 import NotFound from "@/Pages/NotFound/NotFound";
 import SignIn from "../../Pages/Auth/SignIn";
 import SignUp from "../../Pages/Auth/SignUp";
@@ -15,26 +16,17 @@ const routes: RouteType[] = [
     },
     {
       path: '/employees',
+
       icon: 'BadgeIcon',
       name: 'Employees',
       component: Employees
     },
-    {
-      path: '/login',
-      name: 'Login',
-      component: SignIn
+
+      icon: 'DescriptionIcon', 
+      name: 'Employees',
+      component: Dashboard
     },
-    {
-      path: '/register',
-      name: 'Create account',
-      component: SignUp
-    },
-    {
-      path: '/app/404',
-      name: '404',
-      component: NotFound
-    }
-  ];
-  
-  export default routes;
+]
+
+export default routes;
   

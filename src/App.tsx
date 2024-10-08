@@ -2,8 +2,10 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import "./App.css";
 import SignIn from "./Pages/Auth/SignIn";
 import SignUp from "./Pages/Auth/SignUp";
-import Layout from "./Containers/Layout"; // Assurez-vous que Layout est importé correctement
 import { SidebarProvider } from "./context/SidebarContext";
+import ProtectedRoute from "./components/ProtectedRoute";
+import Layout from "./Containers/Layout";
+import NotFound from "./Pages/NotFound/NotFound";
 
 function App() {
   return (
@@ -11,19 +13,18 @@ function App() {
       <Routes>
         <Route path="/login" element={<SignIn />} />
         <Route path="/register" element={<SignUp />} />
-        
-       
-        <Route 
-          path="/app/*" 
-          element={
-            <SidebarProvider>  
-              <Layout />
-            </SidebarProvider>
-          } 
-        />
-        
-        
+        <Route element={<ProtectedRoute />}>
+          <Route
+            path="/app/*"
+            element={
+              <SidebarProvider>
+                <Layout />
+              </SidebarProvider>
+            }
+          />
+        </Route>
         <Route path="/" element={<Navigate to="/login" />} />
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </div>
   );
