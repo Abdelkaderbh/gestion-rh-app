@@ -5,6 +5,7 @@ import SignUp from "./Pages/Auth/SignUp";
 import { SidebarProvider } from "./context/SidebarContext";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Layout from "./Containers/Layout";
+import NotFound from "./Pages/NotFound/NotFound";
 
 function App() {
   return (
@@ -13,17 +14,17 @@ function App() {
         <Route path="/login" element={<SignIn />} />
         <Route path="/register" element={<SignUp />} />
         <Route element={<ProtectedRoute />}>
-          <Route 
-          path="/app/*" 
-          element={
-            <SidebarProvider>  
-              <Layout />
-            </SidebarProvider>
-          } 
-        />
+          <Route
+            path="/app/*"
+            element={
+              <SidebarProvider>
+                <Layout />
+              </SidebarProvider>
+            }
+          />
         </Route>
         <Route path="/" element={<Navigate to="/login" />} />
-
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </div>
   );
