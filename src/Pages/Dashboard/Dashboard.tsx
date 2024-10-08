@@ -1,92 +1,68 @@
-import React, { useMemo, useState, useEffect } from "react";
-import { useAuth } from "../../hooks/useAuth";
+import React from "react";
+import GroupsIcon from "@mui/icons-material/Groups";
+import PaidIcon from "@mui/icons-material/Paid";
+import SmsIcon from "@mui/icons-material/Sms";
+import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
+import PageTitle from "@/components/Titles/PageTitle";
+import Card from "@/components/Cards/Card";
+import { useAuth } from "@/hooks/useAuth";
+
+const capitalizeFirstLetter = (name: string | undefined) => {
+  if (!name) return "";
+  return name.charAt(0).toUpperCase() + name.slice(1).toLowerCase();
+};
 
 const Dashboard: React.FC = () => {
   const { user } = useAuth();
-  const [isLoading, setIsLoading] = useState(true);
-
-  // Log user to check if it is being populated
-  useEffect(() => {
-    console.log("User data:", user);
-    if (user) {
-      setIsLoading(false); // User is loaded, stop loading
-    } else if (!user && !isLoading) {
-      setIsLoading(true); // User is not loaded yet
-    }
-  }, [user]);
-
   const role = user?.role;
-
-  const renderContent = useMemo(() => {
-    switch (role) {
-      case "HR":
-        return (
-          <div className="mt-8">
-            <h2 className="text-xl font-semibold text-gray-700 dark:text-gray-200">
-              HR Dashboard
-            </h2>
-            <p className="mt-4 text-gray-600 dark:text-gray-400">
-              Here you can manage Employees, view Reports, and more.
-            </p>
-          </div>
-        );
-      case "EMPLOYEE":
-        return (
-          <div className="mt-8">
-            <h2 className="text-xl font-semibold text-gray-700 dark:text-gray-200">
-              Employee Dashboard
-            </h2>
-            <p className="mt-4 text-gray-600 dark:text-gray-400">
-              Here you can view your Schedule, Holidays, and Applications.
-            </p>
-          </div>
-        );
-      default:
-        return (
-          <div>
-            <h2 className="text-xl font-semibold text-gray-700 dark:text-gray-200">
-              General Dashboard
-            </h2>
-            <p className="mt-4 text-gray-600 dark:text-gray-400">
-              Welcome to the dashboard.
-            </p>
-          </div>
-        );
-    }
-  }, [role]);
-
-  // If loading, display loading indicator
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center h-screen bg-gray-50 dark:bg-gray-900">
-        <p className="text-gray-600 dark:text-gray-400">Loading...</p>
-      </div>
-    );
-  }
-
-  // If user fails to load or user is undefined
-  if (!user) {
-    return (
-      <div className="flex items-center justify-center h-screen bg-gray-50 dark:bg-gray-900">
-        <p className="text-gray-600 dark:text-gray-400">
-          Unable to load user data. Please try again.
-        </p>
-      </div>
-    );
-  }
+  const userName = capitalizeFirstLetter(user?.name);
 
   return (
-    <div className="flex items-center justify-end h-screen bg-gray-50 dark:bg-gray-900">
-      <div className="p-6 bg-white w-4/5 h-screen shadow-xl dark:bg-gray-800">
-        <h1 className="text-2xl font-semibold text-gray-700 dark:text-gray-200">
-          Dashboard
-        </h1>
-        <p className="mt-4 text-gray-600 dark:text-gray-400">
-          Welcome to your dashboard, {user.name}!
-        </p>
-        {renderContent}
-      </div>
-    </div>
+    <>
+      {role === "HR" ? (
+        <PageTitle>
+          Welcome, <b>{userName}</b> to HR Dashboard
+        </PageTitle>
+      ) : role === "EMPLOYEE" ? (
+        <PageTitle>
+          Welcome, <b>{userName}</b>
+        </PageTitle>
+      ) : (
+        <PageTitle>Welcome to the Dashboard</PageTitle>
+      )}
+
+      {role === "HR" && (
+        <div className="grid gap-6 mb-8 md:grid-cols-2 xl:grid-cols-4">
+          <Card title="Total clients" value="6389">
+            <GroupsIcon
+              component="svg"
+              className="mr-4 text-orange-500 dark:text-orange-100 bg-orange-100 dark:bg-orange-500"
+            />
+          </Card>
+
+          <Card title="Account balance" value="$ 46,760.89">
+            <PaidIcon
+              component="svg"
+              className="mr-4 text-green-500 dark:text-green-100 bg-green-100 dark:bg-green-500"
+            />
+          </Card>
+
+          <Card title="New sales" value="376">
+            <ShoppingCartIcon
+              component="svg"
+              className="mr-4 text-blue-500 dark:text-blue-100 bg-blue-100 dark:bg-blue-500"
+            />
+          </Card>
+
+          <Card title="Pending contacts" value="35">
+            <SmsIcon
+              component="svg"
+              className="mr-4 text-teal-500 dark:text-teal-100 bg-teal-100 dark:bg-teal-500"
+            />
+          </Card>
+        </div>
+      )}
+    </>
   );
 };
 

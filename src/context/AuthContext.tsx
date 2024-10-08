@@ -76,9 +76,9 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
       setIsAuth(true);
 
       if (decoded.role === "HR") {
-        navigate("/dashboard");
+        navigate("/app/dashboard");
       } else {
-        navigate("/employee");
+        navigate("/app/dashboard");
       }
     } else if (error) {
       const errorMessage =
