@@ -2,6 +2,7 @@ import React from 'react';
 import routes from './routes'
 import { NavLink } from 'react-router-dom';
 import HomeIcon from '@mui/icons-material/Home';
+import BadgeIcon from '@mui/icons-material/Badge';
 import DescriptionIcon from '@mui/icons-material/Description';
 import SidebarSubmenu from './SidebarSubmenu';
 import { SvgIconTypeMap } from '@mui/material/SvgIcon';
@@ -18,12 +19,11 @@ export interface RouteType {
 
 const iconMap: { [key: string]: OverridableComponent<SvgIconTypeMap<object, "svg">> } = {
     HomeIcon,
+    BadgeIcon,
     DescriptionIcon,
-    // Ajoutez d'autres icônes ici
   };
   
   
-  // Définir les props pour le composant Icon
   interface IconProps extends SvgIconProps {
     icon: string;
   }
@@ -39,7 +39,6 @@ const Sidebar: React.FC = () => {
       <aside className="z-30 flex-shrink-0 hidden w-64 overflow-y-auto bg-white dark:bg-gray-800 lg:block">
         <div className="py-4 text-gray-500 dark:text-gray-400">
           <a className="ml-6 text-lg font-bold text-gray-800 dark:text-gray-200" href="#">
-            Windmill
           </a>
           <ul className="mt-6">
   {routes.map((route: RouteType) =>
@@ -51,7 +50,8 @@ const Sidebar: React.FC = () => {
           to={`/app${route.path}`}
           className={({ isActive }) =>
             `inline-flex items-center w-full text-sm font-semibold transition-colors duration-150 hover:text-gray-800 dark:hover:text-gray-200 ${
-              isActive ? 'text-gray-800 dark:text-gray-100' : ''
+              isActive ? ' text-purple-600 dark:text-purple-300' : ''
+
             }`
           }
         >
