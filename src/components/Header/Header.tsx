@@ -1,19 +1,27 @@
-import React, { useContext, useState } from 'react';
-import { useSidebar } from '../../context/SidebarContext';
-import SearchIcon from '@mui/icons-material/Search';
-import NightlightRoundIcon from '@mui/icons-material/NightlightRound';
-import WbSunnyIcon from '@mui/icons-material/WbSunny';
-import NotificationsIcon from '@mui/icons-material/Notifications';
-import MenuIcon from '@mui/icons-material/Menu';
-import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
-import SettingsIcon from '@mui/icons-material/Settings';
-import LogoutIcon from '@mui/icons-material/Logout';
+import React, { useContext, useState } from "react";
+import { useSidebar } from "../../context/SidebarContext";
+import SearchIcon from "@mui/icons-material/Search";
+import NightlightRoundIcon from "@mui/icons-material/NightlightRound";
+import WbSunnyIcon from "@mui/icons-material/WbSunny";
+import NotificationsIcon from "@mui/icons-material/Notifications";
+import MenuIcon from "@mui/icons-material/Menu";
+import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
+import SettingsIcon from "@mui/icons-material/Settings";
+import LogoutIcon from "@mui/icons-material/Logout";
 
-import { Avatar, Badge, Dropdown, DropdownItem, WindmillContext } from '@windmill/react-ui';
+import {
+  Avatar,
+  Badge,
+  Dropdown,
+  DropdownItem,
+  WindmillContext,
+} from "@windmill/react-ui";
 import { Input } from "@/components/ui/input";
+import { useAuth } from "@/hooks/useAuth";
 const Header: React.FC = () => {
   const { mode, toggleMode } = useContext(WindmillContext);
   const { toggleSidebar } = useSidebar();
+  const { logout } = useAuth();
 
   const [isNotificationsMenuOpen, setIsNotificationsMenuOpen] = useState(false);
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
@@ -58,7 +66,7 @@ const Header: React.FC = () => {
               onClick={toggleMode}
               aria-label="Toggle color mode"
             >
-              {mode === 'dark' ? (
+              {mode === "dark" ? (
                 <WbSunnyIcon className="w-5 h-5" aria-hidden="true" />
               ) : (
                 <NightlightRoundIcon className="w-5 h-5" aria-hidden="true" />
@@ -94,7 +102,7 @@ const Header: React.FC = () => {
                 <span>Sales</span>
                 <Badge type="danger">2</Badge>
               </DropdownItem>
-              <DropdownItem onClick={() => alert('Alerts!')}>
+              <DropdownItem onClick={() => alert("Alerts!")}>
                 <span>Alerts</span>
               </DropdownItem>
             </Dropdown>
@@ -120,14 +128,17 @@ const Header: React.FC = () => {
               onClose={() => setIsProfileMenuOpen(false)}
             >
               <DropdownItem tag="a" href="#">
-                <PersonOutlineIcon className="w-4 h-4 mr-3" aria-hidden="true" />
+                <PersonOutlineIcon
+                  className="w-4 h-4 mr-3"
+                  aria-hidden="true"
+                />
                 <span>Profile</span>
               </DropdownItem>
               <DropdownItem tag="a" href="#">
                 <SettingsIcon className="w-4 h-4 mr-3" aria-hidden="true" />
                 <span>Settings</span>
               </DropdownItem>
-              <DropdownItem onClick={() => alert('Log out!')}>
+              <DropdownItem onClick={() => logout()}>
                 <LogoutIcon className="w-4 h-4 mr-3" aria-hidden="true" />
                 <span>Log out</span>
               </DropdownItem>
