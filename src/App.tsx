@@ -1,23 +1,29 @@
-import { Route, Routes } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import "./App.css";
 import SignIn from "./Pages/Auth/SignIn";
 import SignUp from "./Pages/Auth/SignUp";
-import NotAuth from "./Pages/NotFound/NotAuth";
-import Dashboard from "./Pages/Dashboard/Dashboard";
+import { SidebarProvider } from "./context/SidebarContext";
 import ProtectedRoute from "./components/ProtectedRoute";
+import Layout from "./Containers/Layout";
 
 function App() {
   return (
     <div className="App">
       <Routes>
-        <Route index element={<SignIn />} />
-        <Route path="*" Component={NotAuth} />
         <Route path="/login" element={<SignIn />} />
         <Route path="/register" element={<SignUp />} />
         <Route element={<ProtectedRoute />}>
-          <Route index path="/dashboard" element={<Dashboard />} />
-          <Route index path="/employee" element={<Dashboard />} />
+          <Route 
+          path="/app/*" 
+          element={
+            <SidebarProvider>  
+              <Layout />
+            </SidebarProvider>
+          } 
+        />
         </Route>
+        <Route path="/" element={<Navigate to="/login" />} />
+
       </Routes>
     </div>
   );
