@@ -3,6 +3,10 @@ import { NavLink } from "react-router-dom";
 import HomeIcon from "@mui/icons-material/Home";
 import BadgeIcon from "@mui/icons-material/Badge";
 import DescriptionIcon from "@mui/icons-material/Description";
+import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
+import AccessTimeIcon from "@mui/icons-material/AccessTime";
+import AssessmentIcon from "@mui/icons-material/Assessment";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import SidebarSubmenu from "./SidebarSubmenu";
 import { SvgIconTypeMap } from "@mui/material/SvgIcon";
 import { SvgIconProps } from "@mui/material";
@@ -23,6 +27,10 @@ const iconMap: {
   HomeIcon,
   BadgeIcon,
   DescriptionIcon,
+  CalendarTodayIcon, 
+  AccessTimeIcon, 
+  AssessmentIcon,
+  CheckCircleIcon,
 };
 
 interface IconProps extends SvgIconProps {

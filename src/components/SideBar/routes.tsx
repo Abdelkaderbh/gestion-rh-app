@@ -34,7 +34,7 @@ const hrRoutes: RouteType[] = [
   },
   {
     path: "/gestion-employes",
-    icon: "ManageAccounts",
+    icon: "BadgeIcon",
     name: "Gestion des Employés",
     component: Employees,
   },
