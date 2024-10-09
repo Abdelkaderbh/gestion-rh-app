@@ -23,7 +23,7 @@ const Employees: React.FC = () => {
   const totalResults = employees ? employees.length : 0;
 
   useEffect(() => {
-    fetchEmployees(); 
+    fetchEmployees();
   }, [fetchEmployees]);
 
   const onPageChangeTable = (p: number) => {
@@ -31,7 +31,7 @@ const Employees: React.FC = () => {
   };
 
   const handleDelete = async (id: string) => {
-    await deleteEmployee(id); 
+    await deleteEmployee(id);
   };
 
   const displayedEmployees = employees
@@ -61,11 +61,13 @@ const Employees: React.FC = () => {
                   <div className="flex items-center text-sm">
                     <div>
                       <p className="font-semibold">{user.name}</p>
-                      <p className="text-xs text-gray-600 dark:text-gray-400">
-                        {user.email}
-                      </p>
                     </div>
                   </div>
+                </TableCell>
+                <TableCell>
+                  <p className="text-xs text-gray-600 dark:text-gray-400">
+                    {user.email}
+                  </p>
                 </TableCell>
                 <TableCell>
                   <div className="flex items-center space-x-4">

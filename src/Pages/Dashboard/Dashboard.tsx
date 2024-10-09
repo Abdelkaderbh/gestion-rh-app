@@ -21,7 +21,7 @@ const Dashboard: React.FC = () => {
     <>
       {role === "HR" ? (
         <PageTitle>
-          Welcome, <b>{userName}</b> to HR Dashboard
+          Welcome, <b>{userName}</b>
         </PageTitle>
       ) : role === "EMPLOYEE" ? (
         <PageTitle>
