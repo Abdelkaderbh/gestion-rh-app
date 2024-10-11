@@ -8,6 +8,7 @@ import SidebarSubmenu from './SidebarSubmenu';
 import { SvgIconTypeMap } from '@mui/material/SvgIcon';
 import { SvgIconProps } from '@mui/material';
 import { OverridableComponent } from '@mui/material/OverridableComponent';
+import ContactMailIcon from '@mui/icons-material/ContactMail';
 // Définir les types pour les routes
 export interface RouteType {
   path: string;
@@ -21,6 +22,7 @@ const iconMap: { [key: string]: OverridableComponent<SvgIconTypeMap<object, "svg
     HomeIcon,
     BadgeIcon,
     DescriptionIcon,
+    ContactMailIcon,
   };
   
   
@@ -39,6 +41,7 @@ const Sidebar: React.FC = () => {
       <aside className="z-30 flex-shrink-0 hidden w-64 overflow-y-auto bg-white dark:bg-gray-800 lg:block">
         <div className="py-4 text-gray-500 dark:text-gray-400">
           <a className="ml-6 text-lg font-bold text-gray-800 dark:text-gray-200" href="#">
+            RH Project
           </a>
           <ul className="mt-6">
   {routes.map((route: RouteType) =>

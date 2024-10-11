@@ -6,14 +6,17 @@ import { BrowserRouter } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext.tsx";
 import { UserProvider } from "./context/UserContext.tsx";
 import DarkModeToggle from "./components/DarkModeToggle.tsx";
+import { LeaveProvider } from "./context/LeaveContext.tsx";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <BrowserRouter>
       <AuthProvider>
         <UserProvider>
+          <LeaveProvider>
           <DarkModeToggle />
           <App />
+          </LeaveProvider>
         </UserProvider>
       </AuthProvider>
     </BrowserRouter>

@@ -18,7 +18,6 @@ import {
 
 import response from './TestTableData';
 import PageTitle from '@/components/Titles/PageTitle';
-import SectionTitle from '@/components/Titles/Section';
 
 export interface TableData {
   avatar: string;
