@@ -8,6 +8,7 @@ import Layout from "./Containers/Layout";
 import NotFound from "./Pages/NotFound/NotFound";
 
 function App() {
+  const token = localStorage.getItem("token");
   return (
     <div className="App">
       <Routes>
@@ -23,7 +24,12 @@ function App() {
             }
           />
         </Route>
-        <Route path="/" element={<Navigate to="/login" />} />
+        {!token ? (
+          <Route path="/" element={<Navigate to="/login" />} />
+        ) : (
+          <Route path="/" element={<Navigate to="/app/dashboard" />} />
+        )}
+
         <Route path="*" element={<NotFound />} />
       </Routes>
     </div>

@@ -8,7 +8,7 @@ import React, {
 } from "react";
 
 export interface Employee {
-  id: string;
+  id?: string;
   name: string;
   email: string;
   password: string;
@@ -92,7 +92,7 @@ export const EmployeeProvider: React.FC<EmployeeProviderProps> = ({
     ) => {
       try {
         await sendSingleRequest({
-          url: `/api/employees/delete/${id}`,
+          url: `/api/employees/update/${id}`,
           method: "PUT",
           data: updatedEmployee,
         });

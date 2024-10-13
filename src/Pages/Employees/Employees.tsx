@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
+import AddIcon from "@mui/icons-material/Add";
 import {
   Table,
   TableHeader,
@@ -14,10 +15,23 @@ import {
 } from "@windmill/react-ui";
 import PageTitle from "@/components/Titles/PageTitle";
 import { useEmployee } from "@/hooks/useEmployee";
+import TransitionsModal from "@/components/Modal/Modal";
+import AddEmployeeForm from "@/components/AddEmployeeForm/AddEmployeeForm";
 
 const Employees: React.FC = () => {
   const [pageTable, setPageTable] = useState<number>(1);
   const { employees, fetchEmployees, deleteEmployee } = useEmployee();
+  const [openModal, setOpenModal] = useState(false);
+  const [selectedEmployee, setSelectedEmployee] = useState<{
+    id: string;
+    fullName: string;
+    email: string;
+  } | null>(null);
+  const [modalContent, setModalContent] = useState<{
+    title: string;
+    body: string | React.ReactNode;
+    confirmAction?: () => void;
+  }>({ title: "", body: "" });
 
   const resultsPerPage = 10;
   const totalResults = employees ? employees.length : 0;
@@ -31,7 +45,38 @@ const Employees: React.FC = () => {
   };
 
   const handleDelete = async (id: string) => {
-    await deleteEmployee(id);
+    setModalContent({
+      title: "Confirm Deletion",
+      body: "Are you sure you want to delete this employee?",
+      confirmAction: async () => {
+        await deleteEmployee(id);
+        handleCloseModal(); // Close modal after deletion
+      },
+    });
+    setOpenModal(true);
+  };
+
+  const handleOpenModal = (employee?: {
+    id: string;
+    fullName: string;
+    email: string;
+  }) => {
+    setSelectedEmployee(employee || null);
+    setModalContent({
+      title: employee ? "Edit Employee" : "Add Employee",
+      body: (
+        <AddEmployeeForm
+          employee={employee} // Pass the employee for editing
+          onClose={handleCloseModal} // Close modal on save
+        />
+      ),
+    });
+    setOpenModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setOpenModal(false);
+    setSelectedEmployee(null); // Reset selected employee when modal closes
   };
 
   const displayedEmployees = employees
@@ -43,7 +88,17 @@ const Employees: React.FC = () => {
 
   return (
     <>
-      <PageTitle>Employees List</PageTitle>
+      <div className="flex justify-between items-center mb-4">
+        <PageTitle>Employees List</PageTitle>
+        <Button
+          size="small"
+          icon={AddIcon}
+          layout="outline"
+          onClick={() => handleOpenModal()}
+        >
+          Add Employee
+        </Button>
+      </div>
 
       <TableContainer className="mb-8">
         <Table>
@@ -71,7 +126,18 @@ const Employees: React.FC = () => {
                 </TableCell>
                 <TableCell>
                   <div className="flex items-center space-x-4">
-                    <Button layout="link" size="small" aria-label="Edit">
+                    <Button
+                      layout="link"
+                      size="small"
+                      aria-label="Edit"
+                      onClick={() =>
+                        handleOpenModal({
+                          id: user.id,
+                          fullName: user.name,
+                          email: user.email,
+                        })
+                      }
+                    >
                       <EditIcon className="w-5 h-5" aria-hidden="true" />
                     </Button>
                     <Button
@@ -97,6 +163,28 @@ const Employees: React.FC = () => {
           />
         </TableFooter>
       </TableContainer>
+
+      <TransitionsModal
+        open={openModal}
+        handleClose={handleCloseModal}
+        title={modalContent.title}
+      >
+        {modalContent.body}
+        {modalContent.confirmAction && (
+          <div className="mt-4 flex justify-end space-x-2">
+            <Button layout="outline" onClick={handleCloseModal}>
+              Cancel
+            </Button>
+            <Button
+              className="bg-red-600 text-white hover:bg-red-700 focus:outline-none"
+              onClick={modalContent.confirmAction}
+              layout="outline"
+            >
+              Confirm
+            </Button>
+          </div>
+        )}
+      </TransitionsModal>
     </>
   );
 };
