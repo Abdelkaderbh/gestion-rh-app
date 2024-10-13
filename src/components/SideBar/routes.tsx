@@ -2,7 +2,8 @@ import Dashboard from "../../Pages/Dashboard/Dashboard";
 import { RouteType } from "./SideBar";
 import Employees from "@/Pages/Employees/Employees";
 
-const routes: RouteType[] = [
+// Employee routes
+const employeeRoutes: RouteType[] = [
   {
     path: "/dashboard",
     icon: "HomeIcon",
@@ -10,11 +11,51 @@ const routes: RouteType[] = [
     component: Dashboard,
   },
   {
-    path: "/employees",
-    icon: "BadgeIcon",
-    name: "Employees",
-    component: Employees,
+    path: "/conge",
+    icon: "CalendarTodayIcon",
+    name: "Congé",
+    //component: Conges,
+  },
+  {
+    path: "/feuille-de-temps",
+    icon: "AccessTimeIcon",
+    name: "Feuille de Temps",
+    //component: FeuilleDeTemps,
   },
 ];
 
-export default routes;
+// HR routes
+const hrRoutes: RouteType[] = [
+  {
+    path: "/dashboard",
+    icon: "HomeIcon",
+    name: "Dashboard",
+    component: Dashboard,
+  },
+  {
+    path: "/gestion-employes",
+    icon: "BadgeIcon",
+    name: "Gestion des Employés",
+    component: Employees,
+  },
+  {
+    path: "/conge",
+    icon: "CalendarTodayIcon",
+    name: "Demandes de Congé",
+    //component: Conges,
+  },
+  {
+    path: "/evaluation",
+    icon: "AssessmentIcon",
+    name: "Évaluation",
+    // component: Evaluation,
+  },
+  {
+    path: "/confirmation-feuille-de-temps",
+    icon: "CheckCircleIcon",
+    name: "Demandes des Feuilles de Temps",
+    //component: ConfirmationFeuilleDeTemps,
+  },
+];
+
+export { employeeRoutes, hrRoutes };
