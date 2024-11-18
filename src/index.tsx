@@ -19,7 +19,6 @@ createRoot(document.getElementById("root")!).render(
             <EmployeeProvider>
               <App />
             </EmployeeProvider>
-            <App />
           </LeaveProvider>
         </UserProvider>
       </AuthProvider>
