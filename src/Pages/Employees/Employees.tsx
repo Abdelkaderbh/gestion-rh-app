@@ -12,11 +12,27 @@ import {
   TableContainer,
   Button,
   Pagination,
+<<<<<<< HEAD
 } from "@windmill/react-ui";
 import PageTitle from "@/components/Titles/PageTitle";
 import { useEmployee } from "@/hooks/useEmployee";
 import TransitionsModal from "@/components/Modal/Modal";
 import AddEmployeeForm from "@/components/AddEmployeeForm/AddEmployeeForm";
+=======
+} from '@windmill/react-ui';
+
+import response from './TestTableData';
+import PageTitle from '@/components/Titles/PageTitle';
+
+export interface TableData {
+  avatar: string;
+  name: string;
+  job: string;
+  amount: number;
+  status: string;
+  date: string;
+}
+>>>>>>> 9264d5366ba16e14b9194b86455d22ec97313247
 
 const Employees: React.FC = () => {
   const [pageTable, setPageTable] = useState<number>(1);
