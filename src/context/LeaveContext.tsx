@@ -1,25 +1,32 @@
-import { createContext, useState, ReactNode, useCallback, useMemo } from "react";
+import {
+  createContext,
+  useState,
+  ReactNode,
+  useCallback,
+  useMemo,
+} from "react";
 import useAxios from "../hooks/useAxios";
 import { LeaveContextType } from "@/types/LeaveContextType";
 
 const LeaveContext = createContext<LeaveContextType | undefined>(undefined);
+
 export interface Leave {
-    id: string;
-    employeeId: string;
-    startDate: string;
-    endDate: string;
-    reason: string;
-    status: "PENDING" | "APPROVED" | "REJECTED";
-  }
-  
+  id: string;
+  employeeId: string;
+  startDate: string;
+  endDate: string;
+  reason: string;
+  status: "PENDING" | "APPROVED" | "REJECTED";
+}
+
 interface LeaveResponse {
-    leave: Leave;
-  }
-  
-  interface LeavesResponse {
-    leaves: Leave[];
-  }
-  
+  leave: Leave;
+}
+
+interface LeavesResponse {
+  leaves: Leave[];
+}
+
 interface LeaveProviderProps {
   children: ReactNode;
 }
@@ -32,7 +39,7 @@ export const LeaveProvider: React.FC<LeaveProviderProps> = ({ children }) => {
   const fetchLeaves = useCallback(async () => {
     try {
       const response = await sendRequest({
-        url: "/api/leaves/all",
+        url: "/api/conge/all",
         method: "GET",
       });
       if (response) {
@@ -106,9 +113,7 @@ export const LeaveProvider: React.FC<LeaveProviderProps> = ({ children }) => {
   );
 
   return (
-    <LeaveContext.Provider value={value}>
-      {children}
-    </LeaveContext.Provider>
+    <LeaveContext.Provider value={value}>{children}</LeaveContext.Provider>
   );
 };
 

@@ -49,7 +49,7 @@ const hrRoutes: RouteType[] = [
     path: "/conge",
     icon: "CalendarTodayIcon",
     name: "Demandes de Congé",
-    //component: Conges,
+    component: Leave,
   },
   {
     path: "/evaluation",

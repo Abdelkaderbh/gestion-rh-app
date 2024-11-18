@@ -12,7 +12,7 @@ import { SvgIconTypeMap } from "@mui/material/SvgIcon";
 import { SvgIconProps } from "@mui/material";
 import { OverridableComponent } from "@mui/material/OverridableComponent";
 import { employeeRoutes, hrRoutes } from "./routes";
-import ContactMailIcon from "@mui/icons-material/ContactMail";
+
 // Définir les types pour les routes
 
 export interface RouteType {
