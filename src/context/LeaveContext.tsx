@@ -7,24 +7,27 @@ import {
 } from "react";
 import useAxios from "../hooks/useAxios";
 import { LeaveContextType } from "@/types/LeaveContextType";
+import { jwtDecode } from "jwt-decode";
 
 const LeaveContext = createContext<LeaveContextType | undefined>(undefined);
 
 export interface Leave {
   id: string;
-  employeeId: string;
-  startDate: string;
-  endDate: string;
-  reason: string;
+  userId: string;
+  description: string;
+  start_date: string;
+  end_date: string;
+  type: string;
   status: "PENDING" | "APPROVED" | "REJECTED";
 }
 
 interface LeaveResponse {
-  leave: Leave;
+  conge: Leave;
 }
 
 interface LeavesResponse {
-  leaves: Leave[];
+  conges: Leave[];
+  empConge: Leave[];
 }
 
 interface LeaveProviderProps {
@@ -42,8 +45,8 @@ export const LeaveProvider: React.FC<LeaveProviderProps> = ({ children }) => {
         url: "/api/conge/all",
         method: "GET",
       });
-      if (response) {
-        setLeaves(response.leaves);
+      if (response && response.conges) {
+        setLeaves(response.conges);
       }
     } catch (err) {
       console.error("Error fetching leaves:", err);
@@ -55,10 +58,15 @@ export const LeaveProvider: React.FC<LeaveProviderProps> = ({ children }) => {
   const addLeave = useCallback(
     async (newLeave: Omit<Leave, "id" | "status">) => {
       try {
+        const token = localStorage.getItem("token");
+        if (!token) throw new Error("Token not found");
+        const decodedToken: { userId: string } = jwtDecode(token);
+        const userId = decodedToken.userId;
+        const leaveWithUserId = { ...newLeave, userId };
         const response = await sendSingleRequest({
-          url: "/api/leaves/addLeave",
+          url: "/api/conge/new",
           method: "POST",
-          data: { ...newLeave, status: "PENDING" },
+          data: { ...leaveWithUserId, status: "PENDING" },
         });
         if (response) {
           await fetchLeaves();
@@ -74,7 +82,7 @@ export const LeaveProvider: React.FC<LeaveProviderProps> = ({ children }) => {
     async (id: string, updatedLeave: Partial<Omit<Leave, "id">>) => {
       try {
         await sendSingleRequest({
-          url: `/api/leaves/update/${id}`,
+          url: `/api/conge/edit/${id}`,
           method: "PUT",
           data: updatedLeave,
         });
@@ -90,7 +98,7 @@ export const LeaveProvider: React.FC<LeaveProviderProps> = ({ children }) => {
     async (id: string) => {
       try {
         await sendSingleRequest({
-          url: `/api/leaves/delete/${id}`,
+          url: `/api/conge/cancel/${id}`,
           method: "DELETE",
         });
         await fetchLeaves();
@@ -101,6 +109,31 @@ export const LeaveProvider: React.FC<LeaveProviderProps> = ({ children }) => {
     [sendSingleRequest, fetchLeaves]
   );
 
+  const fetchLeaveByEmployee = useCallback(async () => {
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        throw new Error("No token found");
+      }
+
+      const response = await sendRequest({
+        url: "http://localhost:5000/api/conge/my-conges",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        method: "GET",
+      });
+
+      console.log("API response for employee leaves:", response);
+
+      if (response && response.empConge) {
+        setLeaves(response.empConge);
+      }
+    } catch (error) {
+      console.error("Error fetching leaves by employee:", error);
+    }
+  }, [sendSingleRequest]);
+
   const value = useMemo(
     () => ({
       leaves,
@@ -108,8 +141,16 @@ export const LeaveProvider: React.FC<LeaveProviderProps> = ({ children }) => {
       updateLeave,
       deleteLeave,
       fetchLeaves,
+      fetchLeaveByEmployee,
     }),
-    [leaves, addLeave, updateLeave, deleteLeave, fetchLeaves]
+    [
+      leaves,
+      addLeave,
+      updateLeave,
+      deleteLeave,
+      fetchLeaves,
+      fetchLeaveByEmployee,
+    ]
   );
 
   return (

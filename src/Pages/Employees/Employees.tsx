@@ -38,6 +38,7 @@ const Employees: React.FC = () => {
     fullName: string;
     email: string;
   } | null>(null);
+  
   const [modalContent, setModalContent] = useState<{
     title: string;
     body: string | React.ReactNode;
@@ -87,7 +88,7 @@ const Employees: React.FC = () => {
 
   const handleCloseModal = () => {
     setOpenModal(false);
-    setSelectedEmployee(null); // Reset selected employee when modal closes
+    setSelectedEmployee(null);
   };
 
   const displayedEmployees = employees

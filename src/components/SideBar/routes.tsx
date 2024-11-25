@@ -15,7 +15,7 @@ const employeeRoutes: RouteType[] = [
     path: "/conge",
     icon: "CalendarTodayIcon",
     name: "Congé",
-    //component: Conges,
+    component: Leave,
   },
   {
     path: "/feuille-de-temps",

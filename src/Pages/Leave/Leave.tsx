@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
+import AddIcon from "@mui/icons-material/Add";
 import {
   Table,
   TableHeader,
@@ -10,31 +11,46 @@ import {
   TableFooter,
   TableContainer,
   Badge,
-  Avatar,
   Button,
   Pagination,
 } from "@windmill/react-ui";
-
+import TransitionsModal from "@/components/Modal/Modal";
 import PageTitle from "@/components/Titles/PageTitle";
 import { useLeave } from "@/hooks/useLeave";
+import { useAuth } from "@/hooks/useAuth"; 
+import AddLeaveForm from "@/components/AddLeaveForm/AddLeaveForm";
 
 const Leave: React.FC = () => {
   const [pageTable, setPageTable] = useState<number>(1);
-  const { leaves, fetchLeaves, deleteLeave } = useLeave(); // Use leaves and fetchLeaves from the context
+  const { leaves, fetchLeaves, fetchLeaveByEmployee, deleteLeave, addLeave,updateLeave } =
+    useLeave();
+  const { role } = useAuth(); // Get the user's role from AuthContext
+  const [openModal, setOpenModal] = useState(false);
+  const [selectedLeave, setSelectedLeave] = useState(null);
 
   const resultsPerPage = 10;
-  const totalResults = leaves ? leaves.length : 0; // Get the total number of leaves
+  const totalResults = leaves ? leaves.length : 0;
 
-  // pagination change control
+  const [modalContent, setModalContent] = useState<{
+    title: string;
+    body: string | React.ReactNode;
+    confirmAction?: () => void;
+  }>({ title: "", body: "" });
+
   const onPageChangeTable = (p: number) => {
     setPageTable(p);
   };
 
   useEffect(() => {
-    fetchLeaves();
-  }, [fetchLeaves]);
+    if (role === "HR") {
+      fetchLeaves();
+    } else {
+      fetchLeaveByEmployee();
+    }
+  }, [fetchLeaves, fetchLeaveByEmployee, role]);
 
-  // Function to map status to badge types
+ 
+
   const getBadgeType = (status: string) => {
     switch (status.toLowerCase()) {
       case "approved":
@@ -48,15 +64,52 @@ const Leave: React.FC = () => {
     }
   };
 
-  const handleDelete = async (id: string) => {
-    if (window.confirm("Are you sure you want to delete this leave?")) {
-      await deleteLeave(id);
-    }
+  const handleDelete = (id: string) => {
+    setModalContent({
+      title: "Confirm Deletion",
+      body: "Are you sure you want to delete this leave request?",
+      confirmAction: async () => {
+        await deleteLeave(id);
+        handleCloseModal();
+      },
+    });
+    setOpenModal(true);
+  };
+
+
+  const handleOpenAddLeaveModal = () => {
+    setModalContent({
+      title: "Add new leave request",
+      body: <AddLeaveForm onSave={handleAddLeave} onClose={handleCloseModal} />,
+    });
+    setOpenModal(true);
+  };
+
+  const handleAddLeave = async (leaveData) => {
+    await addLeave(leaveData);
+    handleCloseModal();
+  };
+
+  const handleCloseModal = () => {
+    setOpenModal(false);
+    setSelectedLeave(null);
   };
 
   return (
     <>
-      <PageTitle>Leaves List</PageTitle>
+      <div className="flex justify-between items-center mb-4">
+        <PageTitle>Leaves List</PageTitle>
+        {role === "EMPLOYEE" && (
+          <Button
+            size="small"
+            icon={AddIcon}
+            layout="outline"
+            onClick={handleOpenAddLeaveModal}
+          >
+            Add Leave
+          </Button>
+        )}
+      </div>
 
       <TableContainer className="mb-8">
         <Table>
@@ -76,27 +129,18 @@ const Leave: React.FC = () => {
                 .slice(
                   (pageTable - 1) * resultsPerPage,
                   pageTable * resultsPerPage
-                ) // Paginate the leaves
+                )
                 .map((leave, i) => (
                   <TableRow key={i}>
                     <TableCell>
                       <div className="flex items-center text-sm">
-                        <Avatar
-                          className="hidden mr-3 md:block"
-                          src="ddd"
-                          alt="Employee avatar"
-                        />
                         <div>
-                          <p className="font-semibold">{leave.employeeId}</p>{" "}
-                          {/* Replace with employee name if available */}
-                          <p className="text-xs text-gray-600 dark:text-gray-400">
-                            {leave.reason}
-                          </p>
+                          <p className="font-semibold">{leave.userId}</p>
                         </div>
                       </div>
                     </TableCell>
                     <TableCell>
-                      <span className="text-sm">{leave.reason}</span>
+                      <span className="text-sm">{leave.type}</span>
                     </TableCell>
                     <TableCell>
                       <Badge type={getBadgeType(leave.status)}>
@@ -105,17 +149,22 @@ const Leave: React.FC = () => {
                     </TableCell>
                     <TableCell>
                       <span className="text-sm">
-                        {new Date(leave.startDate).toLocaleDateString()}
+                        {new Date(leave.start_date).toLocaleDateString()}
                       </span>
                     </TableCell>
                     <TableCell>
                       <span className="text-sm">
-                        {new Date(leave.endDate).toLocaleDateString()}
+                        {new Date(leave.end_date).toLocaleDateString()}
                       </span>
                     </TableCell>
                     <TableCell>
                       <div className="flex items-center space-x-4">
-                        <Button layout="link" size="small" aria-label="Edit">
+                        <Button
+                          layout="link"
+                          size="small"
+                          aria-label="Edit"
+                          onClick={() => console.log("edit")}
+                        >
                           <EditIcon className="w-5 h-5" aria-hidden="true" />
                         </Button>
                         <Button
@@ -141,6 +190,28 @@ const Leave: React.FC = () => {
           />
         </TableFooter>
       </TableContainer>
+
+      <TransitionsModal
+        open={openModal}
+        handleClose={handleCloseModal}
+        title={modalContent.title}
+      >
+        {modalContent.body}
+        {modalContent.confirmAction && (
+          <div className="mt-4 flex justify-end space-x-2">
+            <Button layout="outline" onClick={handleCloseModal}>
+              Cancel
+            </Button>
+            <Button
+              className="bg-red-600 text-white hover:bg-red-700 focus:outline-none"
+              onClick={modalContent.confirmAction}
+              layout="outline"
+            >
+              Confirm
+            </Button>
+          </div>
+        )}
+      </TransitionsModal>
     </>
   );
 };
