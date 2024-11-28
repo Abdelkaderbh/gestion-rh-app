@@ -19,6 +19,7 @@ export interface Leave {
   end_date: string;
   type: string;
   status: "Pending" | "Accepted" | "Rejected";
+  employeeName: string;
 }
 
 interface LeaveResponse {
@@ -45,8 +46,10 @@ export const LeaveProvider: React.FC<LeaveProviderProps> = ({ children }) => {
         url: "/api/conge/all",
         method: "GET",
       });
+
       if (response && response.conges) {
         setLeaves(response.conges);
+        console.log("Response:", response.conges);
       }
     } catch (err) {
       console.error("Error fetching leaves:", err);

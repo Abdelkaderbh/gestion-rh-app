@@ -55,30 +55,35 @@ const Leave: React.FC = () => {
     }
   }, [fetchLeaves, fetchLeaveByEmployee, role]);
 
-  const getBadgeType = (status: string) => {
+  const getBadgeClass = (status: string | undefined) => {
+    if (!status) return "bg-gray-300 text-black";
+
     switch (status.toLowerCase()) {
       case "accepted":
-        return "success";
+        return "bg-green-500 text-white";
       case "rejected":
-        return "danger";
+        return "bg-red-500 text-white";
       case "pending":
-        return "warning";
+        return "bg-yellow-500 text-white";
       default:
-        return "neutral";
+        return "bg-gray-300 text-black";
     }
   };
 
   const handleOpenStatusModal = (leave: Leave) => {
     setModalContent({
-      title: 'Update Status for this Leave',
+      title: "Update Status for this Leave",
       body: (
         <TableCell>
           <div className="flex items-center space-x-4">
             {role === "HR" ? (
               <select
-                value={leave.status}
+                value={leave.conge.status}
                 onChange={(e) =>
-                  updateLeaveStatus(leave.id, e.target.value as Leave["status"])
+                  updateLeaveStatus(
+                    leave.conge.id,
+                    e.target.value as Leave["status"]
+                  )
                 }
                 className="w-full p-2 border border-gray-300 rounded-md"
               >
@@ -149,7 +154,8 @@ const Leave: React.FC = () => {
         <Table>
           <TableHeader>
             <tr>
-              {role === "HR" && <TableCell>Employee</TableCell>}
+              {role === "HR" && <TableCell>Employee</TableCell>}{" "}
+              {/* Display employee column for HR role */}
               <TableCell>Reason</TableCell>
               <TableCell>Status</TableCell>
               <TableCell>Start Date</TableCell>
@@ -169,28 +175,26 @@ const Leave: React.FC = () => {
                     {role === "HR" && (
                       <TableCell>
                         <div className="flex items-center text-sm">
-                          <div>
-                            <p className="font-semibold">{leave.userId}</p>
-                          </div>
+                          <p className="font-semibold">{leave.employeeName}</p>
                         </div>
                       </TableCell>
                     )}
                     <TableCell>
-                      <span className="text-sm">{leave.type}</span>
+                      <span className="text-sm">{leave.conge.type}</span>
                     </TableCell>
                     <TableCell>
-                      <Badge type={getBadgeType(leave.status)}>
-                        {leave.status}
+                      <Badge className={getBadgeClass(leave.conge.status)}>
+                        {leave.conge.status}
                       </Badge>
                     </TableCell>
                     <TableCell>
                       <span className="text-sm">
-                        {new Date(leave.start_date).toLocaleDateString()}
+                        {new Date(leave.conge.start_date).toLocaleDateString()}
                       </span>
                     </TableCell>
                     <TableCell>
                       <span className="text-sm">
-                        {new Date(leave.end_date).toLocaleDateString()}
+                        {new Date(leave.conge.end_date).toLocaleDateString()}
                       </span>
                     </TableCell>
                     <TableCell>
