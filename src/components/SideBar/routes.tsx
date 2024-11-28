@@ -23,12 +23,6 @@ const employeeRoutes: RouteType[] = [
     name: "Feuille de Temps",
     //component: FeuilleDeTemps,
   },
-  {
-    path: "/leave",
-    icon: "ContactMailIcon",
-    name: "Leave",
-    component: Leave,
-  },
 ];
 
 // HR routes

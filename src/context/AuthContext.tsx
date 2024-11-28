@@ -68,18 +68,11 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
   useEffect(() => {
     if (response?.token) {
       localStorage.setItem("token", response.token);
-
       const decoded: any = jwtDecode(response.token);
+      setIsAuth(true);
       setRole(decoded.role);
       setUser(response.user);
-
-      setIsAuth(true);
-
-      if (decoded.role === "HR") {
-        navigate("/app/dashboard");
-      } else {
-        navigate("/app/dashboard");
-      }
+      navigate("/app/dashboard");
     } else if (error) {
       const errorMessage =
         error.message ?? "An error occurred during authentication.";

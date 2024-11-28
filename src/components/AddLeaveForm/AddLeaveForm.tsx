@@ -14,11 +14,11 @@ interface LeaveFormProps {
 }
 
 const AddLeaveForm: React.FC<LeaveFormProps> = ({ leave, onClose }) => {
-  const { addLeave, updateLeave } = useLeave(); // Access context methods
+  const { addLeave, updateLeave } = useLeave();
 
   const [formData, setFormData] = useState({
     description: "",
-    type: "sick", // Default type
+    type: "sick",
     start_date: "",
     end_date: "",
   });
@@ -87,6 +87,7 @@ const AddLeaveForm: React.FC<LeaveFormProps> = ({ leave, onClose }) => {
             type: formData.type,
             start_date: formData.start_date,
             end_date: formData.end_date,
+            userId: ""
           });
         }
         onClose();

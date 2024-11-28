@@ -3,10 +3,9 @@ import { Leave } from "@/context/LeaveContext";
 export interface LeaveContextType {
   leaves: Leave[] | null;
   addLeave: (leave: Omit<Leave, "id" | "status">) => Promise<void>;
-  updateLeave: (
+  updateLeaveStatus: (
     id: string,
-    updatedLeave: Partial<Omit<Leave, "id">>
-  ) => Promise<void>;
+    updatedLeave: Pick<Leave, "status">) => Promise<void>;
   deleteLeave: (id: string) => Promise<void>;
   fetchLeaves: () => Promise<void>;
   fetchLeaveByEmployee: () => Promise<void>;

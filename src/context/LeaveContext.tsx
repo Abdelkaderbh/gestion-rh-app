@@ -18,7 +18,7 @@ export interface Leave {
   start_date: string;
   end_date: string;
   type: string;
-  status: "PENDING" | "APPROVED" | "REJECTED";
+  status: "Pending" | "Accepted" | "Rejected";
 }
 
 interface LeaveResponse {
@@ -69,7 +69,7 @@ export const LeaveProvider: React.FC<LeaveProviderProps> = ({ children }) => {
           data: { ...leaveWithUserId, status: "PENDING" },
         });
         if (response) {
-          await fetchLeaves();
+          await fetchLeaveByEmployee();
         }
       } catch (err) {
         console.error("Error adding leave:", err);
@@ -78,20 +78,23 @@ export const LeaveProvider: React.FC<LeaveProviderProps> = ({ children }) => {
     [sendSingleRequest, fetchLeaves]
   );
 
-  const updateLeave = useCallback(
-    async (id: string, updatedLeave: Partial<Omit<Leave, "id">>) => {
+  const updateLeaveStatus = useCallback(
+    async (id: string, status: "Pending" | "Accepted" | "Rejected") => {
       try {
-        await sendSingleRequest({
-          url: `/api/conge/edit/${id}`,
+        const response = await sendRequest({
+          url: `/api/conge/${id}`,
           method: "PUT",
-          data: updatedLeave,
+          data: { status },
         });
-        await fetchLeaves();
+        if (response) {
+          console.log("Leave status updated:", response);
+          await fetchLeaves();
+        }
       } catch (err) {
-        console.error("Error updating leave:", err);
+        console.error("Error updating leave status:", err);
       }
     },
-    [sendSingleRequest, fetchLeaves]
+    [sendRequest, fetchLeaves]
   );
 
   const deleteLeave = useCallback(
@@ -102,6 +105,7 @@ export const LeaveProvider: React.FC<LeaveProviderProps> = ({ children }) => {
           method: "DELETE",
         });
         await fetchLeaves();
+        await fetchLeaveByEmployee();
       } catch (err) {
         console.error("Error deleting leave:", err);
       }
@@ -115,7 +119,6 @@ export const LeaveProvider: React.FC<LeaveProviderProps> = ({ children }) => {
       if (!token) {
         throw new Error("No token found");
       }
-
       const response = await sendRequest({
         url: "http://localhost:5000/api/conge/my-conges",
         headers: {
@@ -123,22 +126,19 @@ export const LeaveProvider: React.FC<LeaveProviderProps> = ({ children }) => {
         },
         method: "GET",
       });
-
-      console.log("API response for employee leaves:", response);
-
       if (response && response.empConge) {
         setLeaves(response.empConge);
       }
     } catch (error) {
       console.error("Error fetching leaves by employee:", error);
     }
-  }, [sendSingleRequest]);
+  }, [sendRequest]);
 
   const value = useMemo(
     () => ({
       leaves,
       addLeave,
-      updateLeave,
+      updateLeaveStatus,
       deleteLeave,
       fetchLeaves,
       fetchLeaveByEmployee,
@@ -146,7 +146,7 @@ export const LeaveProvider: React.FC<LeaveProviderProps> = ({ children }) => {
     [
       leaves,
       addLeave,
-      updateLeave,
+      updateLeaveStatus,
       deleteLeave,
       fetchLeaves,
       fetchLeaveByEmployee,

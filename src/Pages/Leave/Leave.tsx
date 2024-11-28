@@ -17,16 +17,22 @@ import {
 import TransitionsModal from "@/components/Modal/Modal";
 import PageTitle from "@/components/Titles/PageTitle";
 import { useLeave } from "@/hooks/useLeave";
-import { useAuth } from "@/hooks/useAuth"; 
+import { useAuth } from "@/hooks/useAuth";
 import AddLeaveForm from "@/components/AddLeaveForm/AddLeaveForm";
 
 const Leave: React.FC = () => {
   const [pageTable, setPageTable] = useState<number>(1);
-  const { leaves, fetchLeaves, fetchLeaveByEmployee, deleteLeave, addLeave,updateLeave } =
-    useLeave();
-  const { role } = useAuth(); // Get the user's role from AuthContext
+  const {
+    leaves,
+    fetchLeaves,
+    fetchLeaveByEmployee,
+    deleteLeave,
+    addLeave,
+    updateLeaveStatus,
+  } = useLeave();
+  const { role } = useAuth();
   const [openModal, setOpenModal] = useState(false);
-  const [selectedLeave, setSelectedLeave] = useState(null);
+  const [selectedLeave, setSelectedLeave] = useState<any>(null);
 
   const resultsPerPage = 10;
   const totalResults = leaves ? leaves.length : 0;
@@ -49,11 +55,9 @@ const Leave: React.FC = () => {
     }
   }, [fetchLeaves, fetchLeaveByEmployee, role]);
 
- 
-
   const getBadgeType = (status: string) => {
     switch (status.toLowerCase()) {
-      case "approved":
+      case "accepted":
         return "success";
       case "rejected":
         return "danger";
@@ -64,18 +68,48 @@ const Leave: React.FC = () => {
     }
   };
 
-  const handleDelete = (id: string) => {
+  const handleOpenStatusModal = (leave: Leave) => {
     setModalContent({
-      title: "Confirm Deletion",
-      body: "Are you sure you want to delete this leave request?",
-      confirmAction: async () => {
-        await deleteLeave(id);
-        handleCloseModal();
-      },
+      title: 'Update Status for this Leave',
+      body: (
+        <TableCell>
+          <div className="flex items-center space-x-4">
+            {role === "HR" ? (
+              <select
+                value={leave.status}
+                onChange={(e) =>
+                  updateLeaveStatus(leave.id, e.target.value as Leave["status"])
+                }
+                className="w-full p-2 border border-gray-300 rounded-md"
+              >
+                <option value="Pending">Pending</option>
+                <option value="Accepted">Accepted</option>
+                <option value="Rejected">Rejected</option>
+              </select>
+            ) : (
+              <Button
+                layout="link"
+                size="small"
+                aria-label="Delete"
+                onClick={() => handleDelete(leave.id)}
+              >
+                <DeleteIcon className="w-5 h-5" aria-hidden="true" />
+              </Button>
+            )}
+          </div>
+        </TableCell>
+      ),
     });
     setOpenModal(true);
   };
 
+  const handleUpdateStatus = async (
+    id: string,
+    status: "Accepted" | "Rejected"
+  ) => {
+    await updateLeaveStatus(id, status);
+    handleCloseModal();
+  };
 
   const handleOpenAddLeaveModal = () => {
     setModalContent({
@@ -85,7 +119,7 @@ const Leave: React.FC = () => {
     setOpenModal(true);
   };
 
-  const handleAddLeave = async (leaveData) => {
+  const handleAddLeave = async (leaveData: any) => {
     await addLeave(leaveData);
     handleCloseModal();
   };
@@ -115,7 +149,7 @@ const Leave: React.FC = () => {
         <Table>
           <TableHeader>
             <tr>
-              <TableCell>Employee</TableCell>
+              {role === "HR" && <TableCell>Employee</TableCell>}
               <TableCell>Reason</TableCell>
               <TableCell>Status</TableCell>
               <TableCell>Start Date</TableCell>
@@ -132,13 +166,15 @@ const Leave: React.FC = () => {
                 )
                 .map((leave, i) => (
                   <TableRow key={i}>
-                    <TableCell>
-                      <div className="flex items-center text-sm">
-                        <div>
-                          <p className="font-semibold">{leave.userId}</p>
+                    {role === "HR" && (
+                      <TableCell>
+                        <div className="flex items-center text-sm">
+                          <div>
+                            <p className="font-semibold">{leave.userId}</p>
+                          </div>
                         </div>
-                      </div>
-                    </TableCell>
+                      </TableCell>
+                    )}
                     <TableCell>
                       <span className="text-sm">{leave.type}</span>
                     </TableCell>
@@ -159,22 +195,29 @@ const Leave: React.FC = () => {
                     </TableCell>
                     <TableCell>
                       <div className="flex items-center space-x-4">
-                        <Button
-                          layout="link"
-                          size="small"
-                          aria-label="Edit"
-                          onClick={() => console.log("edit")}
-                        >
-                          <EditIcon className="w-5 h-5" aria-hidden="true" />
-                        </Button>
-                        <Button
-                          layout="link"
-                          size="small"
-                          aria-label="Delete"
-                          onClick={() => handleDelete(leave.id)}
-                        >
-                          <DeleteIcon className="w-5 h-5" aria-hidden="true" />
-                        </Button>
+                        {role === "HR" && (
+                          <Button
+                            layout="link"
+                            size="small"
+                            aria-label="Edit Status"
+                            onClick={() => handleOpenStatusModal(leave)}
+                          >
+                            <EditIcon className="w-5 h-5" aria-hidden="true" />
+                          </Button>
+                        )}
+                        {role !== "HR" && (
+                          <Button
+                            layout="link"
+                            size="small"
+                            aria-label="Delete"
+                            onClick={() => handleDelete(leave.id)}
+                          >
+                            <DeleteIcon
+                              className="w-5 h-5"
+                              aria-hidden="true"
+                            />
+                          </Button>
+                        )}
                       </div>
                     </TableCell>
                   </TableRow>
@@ -197,20 +240,6 @@ const Leave: React.FC = () => {
         title={modalContent.title}
       >
         {modalContent.body}
-        {modalContent.confirmAction && (
-          <div className="mt-4 flex justify-end space-x-2">
-            <Button layout="outline" onClick={handleCloseModal}>
-              Cancel
-            </Button>
-            <Button
-              className="bg-red-600 text-white hover:bg-red-700 focus:outline-none"
-              onClick={modalContent.confirmAction}
-              layout="outline"
-            >
-              Confirm
-            </Button>
-          </div>
-        )}
       </TransitionsModal>
     </>
   );
