@@ -12,11 +12,22 @@ import {
   TableContainer,
   Button,
   Pagination,
+
 } from "@windmill/react-ui";
 import PageTitle from "@/components/Titles/PageTitle";
 import { useEmployee } from "@/hooks/useEmployee";
 import TransitionsModal from "@/components/Modal/Modal";
 import AddEmployeeForm from "@/components/AddEmployeeForm/AddEmployeeForm";
+
+
+export interface TableData {
+  avatar: string;
+  name: string;
+  job: string;
+  amount: number;
+  status: string;
+  date: string;
+}
 
 const Employees: React.FC = () => {
   const [pageTable, setPageTable] = useState<number>(1);
@@ -27,6 +38,7 @@ const Employees: React.FC = () => {
     fullName: string;
     email: string;
   } | null>(null);
+  
   const [modalContent, setModalContent] = useState<{
     title: string;
     body: string | React.ReactNode;
@@ -76,7 +88,7 @@ const Employees: React.FC = () => {
 
   const handleCloseModal = () => {
     setOpenModal(false);
-    setSelectedEmployee(null); // Reset selected employee when modal closes
+    setSelectedEmployee(null);
   };
 
   const displayedEmployees = employees

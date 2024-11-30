@@ -55,13 +55,13 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   useEffect(() => {
     if (response?.token) {
       localStorage.setItem("token", response.token);
-
       const decoded: any = jwtDecode(response.token);
-      setRole(decoded.role);
-      setUser({ ...response.user, id: decoded.id }); 
-
       setIsAuth(true);
-
+      setRole(decoded.role);
+      setUser(response.user);
+      navigate("/app/dashboard");
+      setUser({ ...response.user, id: decoded.id }); 
+      setIsAuth(true);
       if (decoded.role === "HR") {
         navigate("/app/dashboard");
       } else {

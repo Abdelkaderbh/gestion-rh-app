@@ -13,6 +13,8 @@ import { SvgIconProps } from "@mui/material";
 import { OverridableComponent } from "@mui/material/OverridableComponent";
 import { employeeRoutes, hrRoutes } from "./routes";
 
+// Définir les types pour les routes
+
 export interface RouteType {
   path: string;
   icon?: string;
@@ -27,11 +29,15 @@ const iconMap: {
   HomeIcon,
   BadgeIcon,
   DescriptionIcon,
-  CalendarTodayIcon, 
-  AccessTimeIcon, 
+  CalendarTodayIcon,
+  AccessTimeIcon,
   AssessmentIcon,
   CheckCircleIcon,
 };
+
+interface IconProps extends SvgIconProps {
+  icon: string;
+}
 
 interface IconProps extends SvgIconProps {
   icon: string;
@@ -48,7 +54,6 @@ interface SidebarProps {
 
 const Sidebar: React.FC<SidebarProps> = ({ role }) => {
   const routes = role === "HR" ? hrRoutes : employeeRoutes;
-
   return (
     <aside className="z-30 flex-shrink-0 hidden w-64 overflow-y-auto bg-white dark:bg-gray-800 lg:block">
       <div className="py-4 text-gray-500 dark:text-gray-400">

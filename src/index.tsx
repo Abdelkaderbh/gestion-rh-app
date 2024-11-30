@@ -9,19 +9,22 @@ import DarkModeToggle from "./components/DarkModeToggle.tsx";
 import { EmployeeProvider } from "./context/EmployeeContext.tsx";
 import { NotificationProvider } from "@/context/NotificationContext.tsx";
 import { EvaluationProvider } from "./context/EvaluationContex.tsx";
+import { LeaveProvider } from "./context/LeaveContext.tsx";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <BrowserRouter>
       <AuthProvider>
         <UserProvider>
-        <NotificationProvider>
-          <DarkModeToggle />
-          <EmployeeProvider>
-            <EvaluationProvider>
-            <App />
-            </EvaluationProvider>
-          </EmployeeProvider>
+          <NotificationProvider>
+            <DarkModeToggle />
+            <EmployeeProvider>
+              <EvaluationProvider>
+                <LeaveProvider>
+                  <App />
+                </LeaveProvider>
+              </EvaluationProvider>
+            </EmployeeProvider>
           </NotificationProvider>
         </UserProvider>
       </AuthProvider>
