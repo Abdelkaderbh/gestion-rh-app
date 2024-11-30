@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import CancelIcon from "@mui/icons-material/Cancel";
 import AddIcon from "@mui/icons-material/Add";
 import {
   Table,
@@ -33,15 +35,17 @@ const Leave: React.FC = () => {
   const { role } = useAuth();
   const [openModal, setOpenModal] = useState(false);
   const [selectedLeave, setSelectedLeave] = useState<any>(null);
-
-  const resultsPerPage = 10;
-  const totalResults = leaves ? leaves.length : 0;
+  const [editingStatusId, setEditingStatusId] = useState<string | null>(null);
+  const [temporaryStatus, setTemporaryStatus] = useState<string | null>(null);
 
   const [modalContent, setModalContent] = useState<{
     title: string;
     body: string | React.ReactNode;
     confirmAction?: () => void;
   }>({ title: "", body: "" });
+
+  const resultsPerPage = 10;
+  const totalResults = leaves ? leaves.length : 0;
 
   const onPageChangeTable = (p: number) => {
     setPageTable(p);
@@ -70,50 +74,30 @@ const Leave: React.FC = () => {
     }
   };
 
-  const handleOpenStatusModal = (leave: Leave) => {
-    setModalContent({
-      title: "Update Status for this Leave",
-      body: (
-        <TableCell>
-          <div className="flex items-center space-x-4">
-            {role === "HR" ? (
-              <select
-                value={leave.conge.status}
-                onChange={(e) =>
-                  updateLeaveStatus(
-                    leave.conge.id,
-                    e.target.value as Leave["status"]
-                  )
-                }
-                className="w-full p-2 border border-gray-300 rounded-md"
-              >
-                <option value="Pending">Pending</option>
-                <option value="Accepted">Accepted</option>
-                <option value="Rejected">Rejected</option>
-              </select>
-            ) : (
-              <Button
-                layout="link"
-                size="small"
-                aria-label="Delete"
-                onClick={() => handleDelete(leave.id)}
-              >
-                <DeleteIcon className="w-5 h-5" aria-hidden="true" />
-              </Button>
-            )}
-          </div>
-        </TableCell>
-      ),
-    });
-    setOpenModal(true);
+  const handleStartEditing = (leaveId: string, currentStatus: string) => {
+    setEditingStatusId(leaveId);
+    setTemporaryStatus(currentStatus);
   };
 
-  const handleUpdateStatus = async (
-    id: string,
-    status: "Accepted" | "Rejected"
-  ) => {
-    await updateLeaveStatus(id, status);
-    handleCloseModal();
+  const handleCancelEditing = () => {
+    setEditingStatusId(null);
+    setTemporaryStatus(null);
+  };
+
+  const handleCloseModal = () => {
+    setOpenModal(false);
+    setModalContent({ title: "", body: "" });
+  };
+
+  const handleSaveStatus = async (leaveId: string) => {
+    if (temporaryStatus) {
+      await updateLeaveStatus(
+        leaveId,
+        temporaryStatus as "Accepted" | "Rejected" | "Pending"
+      );
+      setEditingStatusId(null);
+      setTemporaryStatus(null);
+    }
   };
 
   const handleOpenAddLeaveModal = () => {
@@ -124,14 +108,10 @@ const Leave: React.FC = () => {
     setOpenModal(true);
   };
 
+
   const handleAddLeave = async (leaveData: any) => {
     await addLeave(leaveData);
     handleCloseModal();
-  };
-
-  const handleCloseModal = () => {
-    setOpenModal(false);
-    setSelectedLeave(null);
   };
 
   return (
@@ -155,7 +135,6 @@ const Leave: React.FC = () => {
           <TableHeader>
             <tr>
               {role === "HR" && <TableCell>Employee</TableCell>}{" "}
-              {/* Display employee column for HR role */}
               <TableCell>Reason</TableCell>
               <TableCell>Status</TableCell>
               <TableCell>Start Date</TableCell>
@@ -183,9 +162,40 @@ const Leave: React.FC = () => {
                       <span className="text-sm">{leave.conge.type}</span>
                     </TableCell>
                     <TableCell>
-                      <Badge className={getBadgeClass(leave.conge.status)}>
-                        {leave.conge.status}
-                      </Badge>
+                      {editingStatusId === leave.conge.id ? (
+                        <div className="flex items-center space-x-2">
+                          <select
+                            value={temporaryStatus || leave.conge.status}
+                            onChange={(e) => setTemporaryStatus(e.target.value)}
+                            className="p-2 border border-gray-300 rounded-md"
+                          >
+                            <option value="Pending">Pending</option>
+                            <option value="Accepted">Accepted</option>
+                            <option value="Rejected">Rejected</option>
+                          </select>
+                          <CheckCircleIcon
+                            onClick={() => handleSaveStatus(leave.conge.id)}
+                            className="cursor-pointer text-green-500"
+                          />
+                          <CancelIcon
+                            onClick={handleCancelEditing}
+                            className="cursor-pointer text-red-500"
+                          />
+                        </div>
+                      ) : (
+                        <Badge
+                          className={getBadgeClass(leave.conge.status)}
+                          onClick={() =>
+                            role === "HR" &&
+                            handleStartEditing(
+                              leave.conge.id,
+                              leave.conge.status
+                            )
+                          }
+                        >
+                          {leave.conge.status}
+                        </Badge>
+                      )}
                     </TableCell>
                     <TableCell>
                       <span className="text-sm">
@@ -204,7 +214,12 @@ const Leave: React.FC = () => {
                             layout="link"
                             size="small"
                             aria-label="Edit Status"
-                            onClick={() => handleOpenStatusModal(leave)}
+                            onClick={() =>
+                              handleStartEditing(
+                                leave.conge.id,
+                                leave.conge.status
+                              )
+                            }
                           >
                             <EditIcon className="w-5 h-5" aria-hidden="true" />
                           </Button>
@@ -214,7 +229,7 @@ const Leave: React.FC = () => {
                             layout="link"
                             size="small"
                             aria-label="Delete"
-                            onClick={() => handleDelete(leave.id)}
+                            onClick={() => deleteLeave(leave.id)}
                           >
                             <DeleteIcon
                               className="w-5 h-5"
@@ -237,14 +252,14 @@ const Leave: React.FC = () => {
           />
         </TableFooter>
       </TableContainer>
-
-      <TransitionsModal
-        open={openModal}
-        handleClose={handleCloseModal}
-        title={modalContent.title}
-      >
-        {modalContent.body}
-      </TransitionsModal>
+      {openModal && (
+        <TransitionsModal open={openModal} handleClose={handleCloseModal}>
+          <div>
+            <h3>{modalContent.title}</h3>
+            {modalContent.body}
+          </div>
+        </TransitionsModal>
+      )}
     </>
   );
 };

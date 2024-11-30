@@ -45,9 +45,7 @@ const Header: React.FC = () => {
           <MenuIcon className="w-6 h-6" aria-hidden="true" />
         </button>
         {/* <!-- Search input --> */}
-        <div className="flex justify-center flex-1 lg:mr-32">
-         
-        </div>
+        <div className="flex justify-center flex-1 lg:mr-32"></div>
         <ul className="flex items-center flex-shrink-0 space-x-6">
           {/* <!-- Theme toggler --> */}
           <li className="flex">

@@ -119,18 +119,26 @@ export const LeaveProvider: React.FC<LeaveProviderProps> = ({ children }) => {
   const fetchLeaveByEmployee = useCallback(async () => {
     try {
       const token = localStorage.getItem("token");
-      if (!token) {
-        throw new Error("No token found");
-      }
+      if (!token) throw new Error("No token found");
+
       const response = await sendRequest({
         url: "http://localhost:5000/api/conge/my-conges",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        headers: { Authorization: `Bearer ${token}` },
         method: "GET",
       });
+
       if (response && response.empConge) {
-        setLeaves(response.empConge);
+        const mappedLeaves = response.empConge.map((leave) => ({
+          conge: {
+            id: leave.id,
+            type: leave.type,
+            status: leave.status,
+            start_date: leave.start_date,
+            end_date: leave.end_date,
+          },
+          employeeName: leave.employeeName || "N/A",
+        }));
+        setLeaves(mappedLeaves);
       }
     } catch (error) {
       console.error("Error fetching leaves by employee:", error);
