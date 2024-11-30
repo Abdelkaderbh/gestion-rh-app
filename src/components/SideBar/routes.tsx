@@ -1,3 +1,4 @@
+import Evaluations from "@/Pages/Evaluation/Evaluation";
 import Dashboard from "../../Pages/Dashboard/Dashboard";
 import { RouteType } from "./SideBar";
 import Employees from "@/Pages/Employees/Employees";
@@ -15,6 +16,12 @@ const employeeRoutes: RouteType[] = [
     icon: "CalendarTodayIcon",
     name: "Congé",
     //component: Conges,
+  },
+  {
+    path: "/evaluation",
+    icon: "CalendarTodayIcon",
+    name: "evaluation",
+    component: Evaluations,
   },
   {
     path: "/feuille-de-temps",
@@ -48,7 +55,7 @@ const hrRoutes: RouteType[] = [
     path: "/evaluation",
     icon: "AssessmentIcon",
     name: "Évaluation",
-    // component: Evaluation,
+    component: Evaluations,
   },
   {
     path: "/confirmation-feuille-de-temps",

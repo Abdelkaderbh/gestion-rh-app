@@ -11,7 +11,7 @@ export interface Employee {
   id?: string;
   name: string;
   email: string;
-  password: string;
+  password?: string;
   role?: string;
 }
 
@@ -32,6 +32,7 @@ export interface EmployeeContextType {
   ) => Promise<void>;
   deleteEmployee: (id: string) => Promise<void>;
   fetchEmployees: () => Promise<void>;
+  fetchEmployeeDetail: (id: string) => Promise<void>;
 }
 
 const EmployeeContext = createContext<EmployeeContextType | undefined>(
@@ -66,6 +67,22 @@ export const EmployeeProvider: React.FC<EmployeeProviderProps> = ({
   }, [sendRequest]);
 
   const { sendRequest: sendSingleRequest } = useAxios<EmployeeResponse>();
+  //Employee detail
+  const fetchEmployeeDetail = useCallback(async (id: string) => {
+    try {
+      const response = await sendSingleRequest({
+        url: `/api/employees/employedetail/${id}`,
+        method: "GET",
+      });
+      if (response) {
+        setEmployees([response.employee]);
+      }
+    } catch (err) {
+      console.error("Error fetching employee:", err);
+    }
+  }, [sendSingleRequest]);
+
+
 
   const addEmployee = useCallback(
     async (newEmployee: Omit<Employee, "role" | "password">) => {
@@ -126,8 +143,9 @@ export const EmployeeProvider: React.FC<EmployeeProviderProps> = ({
       updateEmployee,
       deleteEmployee,
       fetchEmployees,
+      fetchEmployeeDetail,
     }),
-    [employees, addEmployee, updateEmployee, deleteEmployee, fetchEmployees]
+    [employees, addEmployee, updateEmployee, deleteEmployee, fetchEmployees,fetchEmployeeDetail]
   );
 
   return (
