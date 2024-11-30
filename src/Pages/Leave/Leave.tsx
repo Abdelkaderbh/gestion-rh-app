@@ -21,6 +21,7 @@ import PageTitle from "@/components/Titles/PageTitle";
 import { useLeave } from "@/hooks/useLeave";
 import { useAuth } from "@/hooks/useAuth";
 import AddLeaveForm from "@/components/AddLeaveForm/AddLeaveForm";
+///
 
 const Leave: React.FC = () => {
   const [pageTable, setPageTable] = useState<number>(1);
@@ -108,10 +109,16 @@ const Leave: React.FC = () => {
     setOpenModal(true);
   };
 
-
   const handleAddLeave = async (leaveData: any) => {
     await addLeave(leaveData);
     handleCloseModal();
+  };
+
+  const handleDeleteLeave = async () => {
+    if (leaveToDelete) {
+      await deleteLeave(leaveToDelete);
+      handleCloseDeleteModal();
+    }
   };
 
   return (
@@ -229,7 +236,7 @@ const Leave: React.FC = () => {
                             layout="link"
                             size="small"
                             aria-label="Delete"
-                            onClick={() => deleteLeave(leave.id)}
+                            onClick={() => deleteLeave(leave.conge.id)}
                           >
                             <DeleteIcon
                               className="w-5 h-5"
