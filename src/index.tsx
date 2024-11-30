@@ -7,29 +7,24 @@ import { AuthProvider } from "./context/AuthContext.tsx";
 import { UserProvider } from "./context/UserContext.tsx";
 import DarkModeToggle from "./components/DarkModeToggle.tsx";
 import { EmployeeProvider } from "./context/EmployeeContext.tsx";
-import { LeaveProvider } from "./context/LeaveContext.tsx";
 import { NotificationProvider } from "@/context/NotificationContext.tsx";
 import { EvaluationProvider } from "./context/EvaluationContex.tsx";
-
+import { LeaveProvider } from "./context/LeaveContext.tsx";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <BrowserRouter>
       <AuthProvider>
         <UserProvider>
-          <LeaveProvider>
+          <NotificationProvider>
             <DarkModeToggle />
             <EmployeeProvider>
-              <App />
+              <EvaluationProvider>
+                <LeaveProvider>
+                  <App />
+                </LeaveProvider>
+              </EvaluationProvider>
             </EmployeeProvider>
-          </LeaveProvider>
-        <NotificationProvider>
-          <DarkModeToggle />
-          <EmployeeProvider>
-            <EvaluationProvider>
-            <App />
-            </EvaluationProvider>
-          </EmployeeProvider>
           </NotificationProvider>
         </UserProvider>
       </AuthProvider>
