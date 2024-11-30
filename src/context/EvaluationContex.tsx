@@ -1,29 +1,37 @@
+import { useAuth } from "@/hooks/useAuth";
 import useAxios from "../hooks/useAxios";
 import React, { createContext, useState, ReactNode, useCallback, useMemo } from "react";
 
 export interface Evaluation {
-  id?: number; 
-  employeeId: number;
+  id: string; 
+  employeeId: string;
+  employeeName: string;
   score: number;
   comments?: string;
-  evaluationDate: string; 
-  createdBy?: number; 
+  evaluationDate?: Date; 
+  createdBy?: string; 
 }
+
+
+
+
+// Note : La récupération par rôle semble correcte.
+
 
 interface EvaluationResponse {
-  evaluation: Omit<Evaluation, "id">;
+  evaluation: Evaluation;
 }
 
-interface EvaluationsResponse {
-  evaluations: Omit<Evaluation, "id">[];
-}
+
 
 export interface EvaluationContextType {
-  evaluations: Omit<Evaluation, "id">[] | null;
-  addEvaluation: (evaluation: Omit<Evaluation, "id">) => Promise<void>;
-  updateEvaluation: (id: number, updatedEvaluation: Partial<Omit<Evaluation, "id">>) => Promise<void>;
-  deleteEvaluation: (id: number) => Promise<void>;
+  evaluations: Evaluation[] | null;
+  addEvaluation: (evaluation: Evaluation) => Promise<void>;
+  updateEvaluation: (id: string, updatedEvaluation: Partial<Evaluation>) => Promise<void>;
+  deleteEvaluation: (id: string) => Promise<void>;
   fetchEvaluations: () => Promise<void>;
+  fetchEvaluationDetail: (id: string) => Promise<void>;
+  fetchEvaluationsByEmployee: () => Promise<void>;
 }
 
 const EvaluationContext = createContext<EvaluationContextType | undefined>(undefined);
@@ -33,8 +41,8 @@ interface EvaluationProviderProps {
 }
 
 export const EvaluationProvider: React.FC<EvaluationProviderProps> = ({ children }) => {
-  const [evaluations, setEvaluations] = useState<Omit<Evaluation, "id">[] | null>(null);
-  const { sendRequest } = useAxios<EvaluationsResponse>();
+  const [evaluations, setEvaluations] = useState<Evaluation[] | null>(null);
+  const { sendRequest } = useAxios<any>();
 
   const fetchEvaluations = useCallback(async () => {
     try {
@@ -42,18 +50,65 @@ export const EvaluationProvider: React.FC<EvaluationProviderProps> = ({ children
         url: "/api/evaluation/getallevaluation",
         method: "GET",
       });
-      if (response) {
-        setEvaluations(response.evaluations);
+      if (response ) {
+        setEvaluations(response);  // Mise à jour de l'état
+      } else {
+        console.error("Invalid response format:", response);
       }
     } catch (err) {
       console.error("Error fetching evaluations:", err);
     }
   }, [sendRequest]);
+  
+
+  
+
+
 
   const { sendRequest: sendSingleRequest } = useAxios<EvaluationResponse>();
+  const fetchEvaluationDetail = useCallback(async (id: string) => {
+    try {
+      const response = await sendSingleRequest({
+        url: `/api/evaluation/evaluationone/${id}`,
+        method: "GET",
+      });
+      if (response && response.evaluation) {
+        console.log("Evaluation Detail:", response.evaluation);
+      }
+    } catch (err) {
+      console.error("Error fetching evaluation detail:", err);
+    }
+  }, [sendSingleRequest]);
+  
+
+  const { user } = useAuth();
+
+  const fetchEvaluationsByEmployee = useCallback(async () => {
+    try {
+      const userId = user?.id;
+      if (!userId) {
+        console.error("User ID is not available");
+        return;
+      }
+  
+      const response = await sendRequest({
+        url: `/api/evaluation/evaluationbyemployee/${userId}`,
+        method: "GET",
+      });
+      if (response) {
+        setEvaluations(response.evaluations); // Utilise setEvaluations
+      }
+    } catch (err) {
+      console.error("Error fetching evaluations by employee:", err);
+    }
+  }, [sendRequest, user?.id]);
+  
+  
+
+  
 
   const addEvaluation = useCallback(
-    async (newEvaluation: Omit<Evaluation, "id">) => {
+    async (newEvaluation: Evaluation) => {
       try {
         const response = await sendSingleRequest({
           url: "/api/evaluation/addevaluation",
@@ -71,7 +126,7 @@ export const EvaluationProvider: React.FC<EvaluationProviderProps> = ({ children
   );
 
   const updateEvaluation = useCallback(
-    async (id: number, updatedEvaluation: Partial<Omit<Evaluation, "id">>) => {
+    async (id: string, updatedEvaluation: Partial<Evaluation>) => {
       try {
         await sendSingleRequest({
           url: `/api/evaluation/editevaluation/${id}`,
@@ -87,7 +142,7 @@ export const EvaluationProvider: React.FC<EvaluationProviderProps> = ({ children
   );
 
   const deleteEvaluation = useCallback(
-    async (id: number) => {
+    async (id: string) => {
       try {
         await sendSingleRequest({
           url: `/api/evaluation/evaluationdel/${id}`,
@@ -108,8 +163,10 @@ export const EvaluationProvider: React.FC<EvaluationProviderProps> = ({ children
       updateEvaluation,
       deleteEvaluation,
       fetchEvaluations,
+      fetchEvaluationDetail,
+      fetchEvaluationsByEmployee,
     }),
-    [evaluations, addEvaluation, updateEvaluation, deleteEvaluation, fetchEvaluations]
+    [evaluations, addEvaluation, updateEvaluation, deleteEvaluation, fetchEvaluations, fetchEvaluationDetail, fetchEvaluationsByEmployee]
   );
 
   return (
