@@ -1,4 +1,4 @@
-import { User } from "@/context/UserContext";
+
 
 export interface AuthContextType {
   user: User | null;
@@ -7,4 +7,13 @@ export interface AuthContextType {
   login: (email: string, password: string) => Promise<void>;
   logout: () => void;
   authError: string | null;
+}
+
+
+export interface User {
+  id?: string; 
+  email: string;
+  role: string;
+  name: string;
+  password?: string;
 }
