@@ -34,12 +34,16 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   const login = useCallback(
     async (email: string, password: string) => {
-      setAuthError(null);
+       setAuthError(null);
       await sendRequest({
         method: "POST",
         url: "/api/auth/signin",
         data: { email, password },
       });
+      if(error){
+        setAuthError("Login failed. Please check your credentials.");
+      }
+      
     },
     [sendRequest]
   );

@@ -6,6 +6,8 @@ import { Label, Button } from "@windmill/react-ui";
 import { useUser } from "../../hooks/useUser";
 import { useNavigate } from "react-router-dom";
 import { Input } from "../../components/ui/input";
+import Alert from "@mui/material/Alert";
+import "./Alert.css";
 
 interface FormState {
   username: string;
@@ -15,7 +17,7 @@ interface FormState {
 }
 
 const SignUp: React.FC = () => {
-  const { signup } = useUser();
+  const { signup, authError } = useUser();
   const navigate = useNavigate();
   const [form, setForm] = useState<FormState>({
     username: "",
@@ -24,38 +26,73 @@ const SignUp: React.FC = () => {
     confirmPassword: "",
   });
 
+  const [message, setMessage] = useState<string | null>(null);
+  const [alertType, setAlertType] = useState<'success' | 'error' | null>(null);
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setForm({
-      ...form,
-      [name]: value,
-    });
+    setForm({ ...form, [name]: value });
+  };
+
+  const validateForm = () => {
+    const errors: string[] = [];
+    
+    if (!form.username || !form.email || !form.password || !form.confirmPassword) {
+      errors.push("All fields are required.");
+    }
+    if (form.username.length > 0 && form.username.length < 3) {
+      errors.push("Name must be at least 3 characters long.");
+    }
+    if (form.email.length > 0 && !/\S+@\S+\.\S+/.test(form.email)) {
+      errors.push("Invalid email format.");
+    }
+    if (form.password.length > 0 && form.password.length < 6) {
+      errors.push("Password must be at least 6 characters long.");
+    }
+    if (form.password && form.confirmPassword && form.password !== form.confirmPassword) {
+      errors.push("Passwords do not match.");
+    }
+
+    return errors;
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setMessage(null);
+    setAlertType(null);
 
-    if (form.password !== form.confirmPassword) {
-      alert("Passwords do not match!");
+    const validationErrors = validateForm();
+    if (validationErrors.length > 0) {
+      setMessage(validationErrors.join(" "));
+      setAlertType("error");
       return;
     }
 
     try {
-      await signup({
-        name: form.username,
-        email: form.email,
-        password: form.password,
-        role: "EMPLOYEE",
-      });
-      navigate("/login");
+      await signup({ name: form.username, email: form.email, password: form.password, role: "EMPLOYEE" });
+      if (authError) {
+        setMessage(authError);
+        setAlertType("error");
+      } else {
+        setMessage("Registration successful!");
+        setAlertType("success");
+        setTimeout(() => navigate("/login"), 3000);
+      }
     } catch (error) {
       console.error("Registration failed:", error);
-      alert("Registration failed. Please try again.");
+      setMessage("An unexpected error occurred. Please try again.");
+      setAlertType("error");
     }
   };
 
   return (
     <div className="flex items-center sm:max-h-[80vh] min-h-screen p-6 bg-gray-50 dark:bg-gray-900">
+      {message && alertType && (
+        <div className="slide-down">
+          <Alert severity={alertType}>{message}</Alert>
+        </div>
+      )}
+
       <div className="flex-1 h-full max-w-4xl mx-auto overflow-hidden bg-white rounded-lg shadow-xl dark:bg-gray-800">
         <div className="flex flex-col overflow-y-auto md:flex-row">
           <div className="h-32 md:h-auto md:w-1/2">
@@ -78,6 +115,7 @@ const SignUp: React.FC = () => {
                 Create account
               </h1>
               <form onSubmit={handleSubmit}>
+                {/* Champs du formulaire */}
                 <Label>
                   <span className="font-semibold">Username</span>
                   <Input
@@ -89,6 +127,7 @@ const SignUp: React.FC = () => {
                     placeholder="john.doe"
                     autoComplete="off"
                   />
+                  
                 </Label>
                 <Label className="mt-2">
                   <span className="font-semibold">Email</span>
