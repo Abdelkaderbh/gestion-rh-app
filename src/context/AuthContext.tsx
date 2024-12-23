@@ -34,12 +34,16 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   const login = useCallback(
     async (email: string, password: string) => {
-      setAuthError(null);
+       setAuthError(null);
       await sendRequest({
         method: "POST",
         url: "/api/auth/signin",
         data: { email, password },
       });
+      if(error){
+        setAuthError("Login failed. Please check your credentials.");
+      }
+      
     },
     [sendRequest]
   );
@@ -55,13 +59,13 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   useEffect(() => {
     if (response?.token) {
       localStorage.setItem("token", response.token);
+
       const decoded: any = jwtDecode(response.token);
-      setIsAuth(true);
       setRole(decoded.role);
-      setUser(response.user);
-      navigate("/app/dashboard");
       setUser({ ...response.user, id: decoded.id }); 
+
       setIsAuth(true);
+
       if (decoded.role === "HR") {
         navigate("/app/dashboard");
       } else {

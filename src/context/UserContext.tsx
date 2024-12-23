@@ -17,11 +17,13 @@ export interface User {
 
 interface SignupResponse {
   user: User;
+  
 }
 
 export interface UserContextType {
   user: User | null;
   signup: (user: User) => Promise<void>;
+  authError: string | null;
 }
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
@@ -32,24 +34,27 @@ interface UserProviderProps {
 
 export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
+  const [authError, setAuthError] = useState<string | null>(null);
 
-  const { sendRequest } = useAxios<SignupResponse>();
+  const { sendRequest,error } = useAxios<SignupResponse>();
 
   const signup = useCallback(
     async (newUser: User) => {
-      try {
+     
         const response = await sendRequest({
           url: "/api/auth/signup",
           method: "POST",
           data: newUser,
         });
-
+        
         if (response) {
           setUser(response.user);
         }
-      } catch (err) {
-        console.error("Signup error:", err);
-      }
+      
+        if(error){
+          setAuthError("Signup failed. Please check your credentials.");
+        }
+      
     },
     [sendRequest]
   );
@@ -58,8 +63,9 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
     () => ({
       user,
       signup,
+      authError,
     }),
-    [user, signup]
+    [user, signup,authError]
   );
 
   return <UserContext.Provider value={value}>{children}</UserContext.Provider>;

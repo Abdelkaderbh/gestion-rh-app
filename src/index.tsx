@@ -16,15 +16,15 @@ createRoot(document.getElementById("root")!).render(
     <BrowserRouter>
       <AuthProvider>
         <UserProvider>
-          <NotificationProvider>
-            <DarkModeToggle />
-            <EmployeeProvider>
-              <EvaluationProvider>
-                <LeaveProvider>
-                  <App />
-                </LeaveProvider>
-              </EvaluationProvider>
-            </EmployeeProvider>
+        <NotificationProvider>
+          <DarkModeToggle />
+          <EmployeeProvider>
+            <EvaluationProvider>
+            <LeaveProvider>
+            <App />
+            </LeaveProvider>
+            </EvaluationProvider>
+          </EmployeeProvider>
           </NotificationProvider>
         </UserProvider>
       </AuthProvider>

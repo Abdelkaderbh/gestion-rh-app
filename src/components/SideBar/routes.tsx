@@ -25,6 +25,12 @@ const employeeRoutes: RouteType[] = [
     component: Evaluations,
   },
   {
+    path: "/evaluation",
+    icon: "CalendarTodayIcon",
+    name: "evaluation",
+    component: Evaluations,
+  },
+  {
     path: "/feuille-de-temps",
     icon: "AccessTimeIcon",
     name: "Feuille de Temps",
