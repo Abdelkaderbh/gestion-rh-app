@@ -1,3 +1,4 @@
+import Leave from "@/Pages/Leave/Leave";
 import Evaluations from "@/Pages/Evaluation/Evaluation";
 import Dashboard from "../../Pages/Dashboard/Dashboard";
 import { RouteType } from "./SideBar";
@@ -15,7 +16,13 @@ const employeeRoutes: RouteType[] = [
     path: "/conge",
     icon: "CalendarTodayIcon",
     name: "Congé",
-    //component: Conges,
+    component: Leave,
+  },
+  {
+    path: "/evaluation",
+    icon: "CalendarTodayIcon",
+    name: "evaluation",
+    component: Evaluations,
   },
   {
     path: "/evaluation",
@@ -49,7 +56,7 @@ const hrRoutes: RouteType[] = [
     path: "/conge",
     icon: "CalendarTodayIcon",
     name: "Demandes de Congé",
-    //component: Conges,
+    component: Leave,
   },
   {
     path: "/evaluation",
