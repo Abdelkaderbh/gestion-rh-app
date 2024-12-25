@@ -10,6 +10,7 @@ import { EmployeeProvider } from "./context/EmployeeContext.tsx";
 import { NotificationProvider } from "@/context/NotificationContext.tsx";
 import { EvaluationProvider } from "./context/EvaluationContex.tsx";
 import { LeaveProvider } from "./context/LeaveContext.tsx";
+import { TimesheetProvider } from "./context/TimeSheetContext.tsx";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
@@ -21,7 +22,9 @@ createRoot(document.getElementById("root")!).render(
           <EmployeeProvider>
             <EvaluationProvider>
             <LeaveProvider>
+            <TimesheetProvider>
             <App />
+            </TimesheetProvider>
             </LeaveProvider>
             </EvaluationProvider>
           </EmployeeProvider>
