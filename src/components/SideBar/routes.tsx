@@ -3,6 +3,7 @@ import Evaluations from "@/Pages/Evaluation/Evaluation";
 import Dashboard from "../../Pages/Dashboard/Dashboard";
 import { RouteType } from "./SideBar";
 import Employees from "@/Pages/Employees/Employees";
+import TimeSheet from "@/Pages/TimeSheet/Timesheet";
 
 // Employee routes
 const employeeRoutes: RouteType[] = [
@@ -25,16 +26,10 @@ const employeeRoutes: RouteType[] = [
     component: Evaluations,
   },
   {
-    path: "/evaluation",
-    icon: "CalendarTodayIcon",
-    name: "evaluation",
-    component: Evaluations,
-  },
-  {
-    path: "/feuille-de-temps",
+    path: "/timesheet",
     icon: "AccessTimeIcon",
-    name: "Feuille de Temps",
-    //component: FeuilleDeTemps,
+    name: "TimeSheets",
+    component: TimeSheet,
   },
 ];
 
@@ -65,10 +60,10 @@ const hrRoutes: RouteType[] = [
     component: Evaluations,
   },
   {
-    path: "/confirmation-feuille-de-temps",
+    path: "/timesheet",
     icon: "CheckCircleIcon",
-    name: "Demandes des Feuilles de Temps",
-    //component: ConfirmationFeuilleDeTemps,
+    name: "TimeSheets requestes",
+    component: TimeSheet,
   },
 ];
 
