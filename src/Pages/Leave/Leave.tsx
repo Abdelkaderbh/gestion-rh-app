@@ -38,7 +38,7 @@ const Leave: React.FC = () => {
   const [selectedLeave, setSelectedLeave] = useState<any>(null);
   const [editingStatusId, setEditingStatusId] = useState<string | null>(null);
   const [temporaryStatus, setTemporaryStatus] = useState<string | null>(null);
-
+ 
   const [modalContent, setModalContent] = useState<{
     title: string;
     body: string | React.ReactNode;
@@ -114,12 +114,7 @@ const Leave: React.FC = () => {
     handleCloseModal();
   };
 
-  const handleDeleteLeave = async () => {
-    if (leaveToDelete) {
-      await deleteLeave(leaveToDelete);
-      handleCloseDeleteModal();
-    }
-  };
+
 
   return (
     <>
@@ -166,13 +161,13 @@ const Leave: React.FC = () => {
                       </TableCell>
                     )}
                     <TableCell>
-                      <span className="text-sm">{leave.conge.type}</span>
+                      <span className="text-sm">{leave.type}</span>
                     </TableCell>
                     <TableCell>
-                      {editingStatusId === leave.conge.id ? (
+                      {editingStatusId === leave.id ? (
                         <div className="flex items-center space-x-2">
                           <select
-                            value={temporaryStatus || leave.conge.status}
+                            value={temporaryStatus || leave.status}
                             onChange={(e) => setTemporaryStatus(e.target.value)}
                             className="p-2 border border-gray-300 rounded-md"
                           >
@@ -181,7 +176,7 @@ const Leave: React.FC = () => {
                             <option value="Rejected">Rejected</option>
                           </select>
                           <CheckCircleIcon
-                            onClick={() => handleSaveStatus(leave.conge.id)}
+                            onClick={() => handleSaveStatus(leave.id)}
                             className="cursor-pointer text-green-500"
                           />
                           <CancelIcon
@@ -191,27 +186,27 @@ const Leave: React.FC = () => {
                         </div>
                       ) : (
                         <Badge
-                          className={getBadgeClass(leave.conge.status)}
+                          className={getBadgeClass(leave.status)}
                           onClick={() =>
                             role === "HR" &&
                             handleStartEditing(
-                              leave.conge.id,
-                              leave.conge.status
+                              leave.id,
+                              leave.status
                             )
                           }
                         >
-                          {leave.conge.status}
+                          {leave.status}
                         </Badge>
                       )}
                     </TableCell>
                     <TableCell>
                       <span className="text-sm">
-                        {new Date(leave.conge.start_date).toLocaleDateString()}
+                        {new Date(leave.start_date).toLocaleDateString()}
                       </span>
                     </TableCell>
                     <TableCell>
                       <span className="text-sm">
-                        {new Date(leave.conge.end_date).toLocaleDateString()}
+                        {new Date(leave.end_date).toLocaleDateString()}
                       </span>
                     </TableCell>
                     <TableCell>
@@ -223,8 +218,8 @@ const Leave: React.FC = () => {
                             aria-label="Edit Status"
                             onClick={() =>
                               handleStartEditing(
-                                leave.conge.id,
-                                leave.conge.status
+                                leave.id,
+                                leave.status
                               )
                             }
                           >
@@ -236,7 +231,7 @@ const Leave: React.FC = () => {
                             layout="link"
                             size="small"
                             aria-label="Delete"
-                            onClick={() => deleteLeave(leave.conge.id)}
+                            onClick={() => deleteLeave(leave.id)}
                           >
                             <DeleteIcon
                               className="w-5 h-5"

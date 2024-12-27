@@ -48,11 +48,14 @@ export const LeaveProvider: React.FC<LeaveProviderProps> = ({ children }) => {
       });
 
       if (response && response.conges) {
-        setLeaves(response.conges);
-        console.log("Response:", response.conges);
+        const formattedLeaves = response.conges.map((item) => ({
+          ...item.conge,
+          employeeName: item.employeeName,
+        }));
+        setLeaves(formattedLeaves);
       }
-    } catch (err) {
-      console.error("Error fetching leaves:", err);
+    } catch (error) {
+      console.error("Error fetching leaves:", error);
     }
   }, [sendRequest]);
 
@@ -129,13 +132,13 @@ export const LeaveProvider: React.FC<LeaveProviderProps> = ({ children }) => {
 
       if (response && response.empConge) {
         const mappedLeaves = response.empConge.map((leave) => ({
-          conge: {
-            id: leave.id,
-            type: leave.type,
-            status: leave.status,
-            start_date: leave.start_date,
-            end_date: leave.end_date,
-          },
+          id: leave.id,
+          userId: leave.userId,
+          description: leave.description,
+          start_date: leave.start_date,
+          end_date: leave.end_date,
+          type: leave.type,
+          status: leave.status,
           employeeName: leave.employeeName || "N/A",
         }));
         setLeaves(mappedLeaves);

@@ -71,6 +71,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       } else {
         navigate("/app/dashboard");
       }
+      window.location.reload();
     } else if (error) {
       const errorMessage =
         error.message ?? "An error occurred during authentication.";
